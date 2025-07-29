@@ -35,6 +35,35 @@ def template(template_name: str) -> jinja2.Template:
 
 
 def create_html_assets(config: Settings, output_file: Path) -> None:
+    """
+    Generate and write HTML assets to the specified output directory.
+
+    This function creates the necessary directories and files for 
+    CSS and JavaScript assets based on the provided configuration. 
+    It removes any existing directory defined by the `assets_prefix` 
+    in the configuration and recreates it with updated assets.
+
+    Parameters:
+        config (Settings): The configuration object containing settings 
+                           for HTML assets, including the style theme 
+                           and localization options.
+        output_file (Path): The path to the output directory where 
+                            the HTML assets will be stored.
+
+    Returns:
+        None: This function does not return a value. It directly 
+              modifies the file system by creating directories and files.
+
+    Notes:
+        - If `use_local_assets` is true, the function will include 
+          local theme-specific CSS and JS files based on the 
+          `theme` specified in the configuration.
+        - Default CSS and JS files are also included regardless 
+          of the theme.
+        - The generated files will be populated with rendered 
+          templates, incorporating primary colors and navbar settings 
+          from the configuration.
+    """
     theme = config.html.style.theme
 
     path = output_file.with_name(str(config.html.assets_prefix))

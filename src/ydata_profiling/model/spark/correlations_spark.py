@@ -22,6 +22,27 @@ SPARK_CORRELATION_SPEARMAN = "spearman"
 def spark_spearman_compute(
     config: Settings, df: DataFrame, summary: dict
 ) -> Optional[pd.DataFrame]:
+    """config: Settings, df: DataFrame, summary: dict
+) -> Optional[pd.DataFrame]:
+    """
+    Computes the Spearman correlation matrix for a given DataFrame using Spark.
+
+    This function retrieves the numerical columns of the provided DataFrame
+    and utilizes Spark's native capabilities to compute the Spearman correlation.
+    It returns the resulting correlation matrix as a Pandas DataFrame.
+
+    Args:
+        config (Settings): Configuration object containing settings for the computation.
+        df (DataFrame): The input Spark DataFrame for which the Spearman correlation 
+                        matrix is to be computed.
+        summary (dict): A dictionary that may contain summary statistics or additional
+                        information relevant to the computation.
+
+    Returns:
+        Optional[pd.DataFrame]: A Pandas DataFrame representing the Spearman correlation 
+                                 matrix, indexed by numerical column names. Returns None 
+                                 if the computation fails or if there are no numerical columns.
+    """
     # Get the numerical cols for index and column names
     # Spark only computes Spearman natively for the above dtypes
     matrix, num_cols = _compute_spark_corr_natively(
@@ -34,6 +55,25 @@ def spark_spearman_compute(
 def spark_pearson_compute(
     config: Settings, df: DataFrame, summary: dict
 ) -> Optional[pd.DataFrame]:
+    """config: Settings, df: DataFrame, summary: dict
+) -> Optional[pd.DataFrame]:
+    """
+    Computes the Pearson correlation coefficient for the numerical columns in the provided DataFrame 
+    using Spark's native computation capabilities.
+
+    This function registers the computation with the Pearson module and is particularly designed 
+    to handle DataFrames with numerical data types supported by Spark for Pearson correlation.
+
+    Args:
+        config (Settings): The configuration settings used for the computation.
+        df (DataFrame): The input Spark DataFrame containing the data for correlation analysis.
+        summary (dict): A summary dictionary that may contain additional information relevant to the computation.
+
+    Returns:
+        Optional[pd.DataFrame]: A Pandas DataFrame containing the Pearson correlation matrix with 
+        numerical column names as both index and columns. If the computation cannot be performed, 
+        returns None.
+    """
 
     # Get the numerical cols for index and column names
     # Spark only computes Pearson natively for the above dtypes
@@ -80,6 +120,30 @@ def _compute_spark_corr_natively(
 def spark_kendall_compute(
     config: Settings, df: DataFrame, summary: dict
 ) -> Optional[pd.DataFrame]:
+    """config: Settings, df: DataFrame, summary: dict
+) -> Optional[pd.DataFrame]:
+    """
+    Computes the Kendall correlation based on the provided configuration and input data.
+
+    This function is registered with the Kendall computation framework and is expected
+    to implement the logic for calculating Kendall coefficients from a given DataFrame.
+
+    Args:
+        config (Settings): A configuration object containing settings required for the computation.
+        df (DataFrame): A Pandas DataFrame containing the data on which the Kendall correlation
+                        is to be computed.
+        summary (dict): A dictionary to store summarized results or metadata related to the
+                        computation.
+
+    Returns:
+        Optional[pd.DataFrame]: A Pandas DataFrame containing the results of the Kendall
+                                  computation, or None if the computation cannot be performed.
+
+    Raises:
+        NotImplementedError: This function is a placeholder and should be implemented
+                             to provide the actual computation logic.
+    """
+    raise NotImplementedError()"""
     raise NotImplementedError()
 
 
@@ -87,6 +151,30 @@ def spark_kendall_compute(
 def spark_cramers_compute(
     config: Settings, df: DataFrame, summary: dict
 ) -> Optional[pd.DataFrame]:
+    """config: Settings, df: DataFrame, summary: dict
+) -> Optional[pd.DataFrame]:
+    """
+    Computes Cramér's V statistic for categorical feature analysis in a Spark DataFrame.
+
+    This function is registered with the computation framework and is expected to
+    perform the calculation of Cramér's V based on the input configuration and 
+    data provided. It currently raises a NotImplementedError, indicating that 
+    the implementation is pending.
+
+    Args:
+        config (Settings): The settings for the computation, which may include 
+                           parameters such as significance level, categories 
+                           to analyze, etc.
+        df (DataFrame): A Spark DataFrame containing the categorical data 
+                        for which Cramér's V needs to be computed.
+        summary (dict): A dictionary that may hold summary statistics or 
+                        additional context for the computation.
+
+    Returns:
+        Optional[pd.DataFrame]: A Pandas DataFrame containing Cramér's V results, 
+                                or None if the computation is not yet implemented.
+    """
+    raise NotImplementedError()"""
     raise NotImplementedError()
 
 
@@ -94,6 +182,30 @@ def spark_cramers_compute(
 def spark_phi_k_compute(
     config: Settings, df: DataFrame, summary: dict
 ) -> Optional[pd.DataFrame]:
+    """config: Settings, df: DataFrame, summary: dict
+) -> Optional[pd.DataFrame]:
+    """
+    Computes the PhiK correlation matrix for a given DataFrame using Spark.
+
+    This function leverages a pandas User Defined Function (UDF) to calculate 
+    the PhiK correlations between supported numeric columns and selected 
+    categorical columns. It only considers columns with a certain number 
+    of distinct values, as defined in the provided configuration.
+
+    Args:
+        config (Settings): An object containing configuration settings such as 
+                           the maximum number of distinct values for categorical 
+                           columns to be considered in the correlation calculation.
+        df (DataFrame): A Spark DataFrame containing the data for which 
+                        correlations will be computed.
+        summary (dict): A dictionary providing metadata about the DataFrame's columns, 
+                        including their types and number of distinct values.
+
+    Returns:
+        Optional[pd.DataFrame]: A Pandas DataFrame containing the PhiK correlation 
+                                 matrix, or None if there are not enough columns 
+                                 to compute correlations.
+    """
 
     threshold = config.categorical_maximum_correlation_distinct
     intcols = {

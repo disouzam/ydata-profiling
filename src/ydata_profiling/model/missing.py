@@ -9,16 +9,72 @@ from ydata_profiling.config import Settings
 
 @multimethod
 def missing_bar(config: Settings, df: Any) -> str:
+    """
+    A multi-method placeholder function for handling missing bar logic.
+
+    This function is intended to be overridden in subclasses. It raises
+    a NotImplementedError when called, indicating that the specific 
+    implementation for handling missing bars has not been provided.
+
+    Parameters:
+        config (Settings): The configuration settings to be used by the method.
+        df (Any): The data frame or data structure that is being processed.
+
+    Returns:
+        str: A string indicating the result or status of the operation.
+
+    Raises:
+        NotImplementedError: Indicates that the method needs to be implemented in a subclass.
+    """
     raise NotImplementedError()
 
 
 @multimethod
 def missing_matrix(config: Settings, df: Any) -> str:
+    """
+    Generate a missing matrix representation for the given DataFrame based on the specified configuration.
+
+    This function is currently not implemented and will raise a NotImplementedError if called.
+
+    Parameters:
+    ----------
+    config : Settings
+        The configuration settings that define how the missing matrix should be generated.
+        
+    df : Any
+        The input DataFrame containing the data for which the missing matrix needs to be created.
+
+    Returns:
+    -------
+    str
+        A string representation of the missing matrix. (This will not be returned as the function is not implemented.)
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised to indicate that the function needs to be implemented.
+    """
     raise NotImplementedError()
 
 
 @multimethod
 def missing_heatmap(config: Settings, df: Any) -> str:
+    """
+    Generate a heatmap indicating missing values in the provided DataFrame.
+
+    This function is a multimethod that takes a configuration object and a DataFrame as input.
+    It raises a NotImplementedError, indicating that the specific implementation needs to be provided.
+
+    Args:
+        config (Settings): An object containing settings for generating the heatmap.
+        df (Any): The DataFrame for which the missing values will be analyzed.
+
+    Returns:
+        str: A string representation or file path of the generated heatmap.
+
+    Raises:
+        NotImplementedError: If this method is not implemented in the subclass.
+    """
     raise NotImplementedError()
 
 
@@ -73,6 +129,47 @@ def get_missing_active(config: Settings, table_stats: dict) -> Dict[str, Any]:
 
 
 def handle_missing(name: str, fn: Callable) -> Callable:
+    """
+    A decorator that handles missing values for the specified diagram generator function.
+
+    This decorator wraps a function that generates diagrams related to missing values.
+    If an error occurs during the execution of the wrapped function (specifically a ValueError),
+    it will trigger a warning message that indicates the failure reason and provides guidance on
+    how to suppress the warning.
+
+    Args:
+        name (str): The name of the diagram for which missing values are being handled.
+        fn (Callable): The function to be decorated that generates diagrams.
+
+    Returns:
+        Callable: A wrapped version of the input function that implements error handling.
+
+    Warning:
+        The warning message includes a link to report issues if this behavior is problematic for
+        the user's use case. The user is encouraged to include the error message when reporting.
+
+    Example:
+        @handle_missing("some_diagram", some_diagram_generator_function)
+        def generate_diagram(data):
+            # Diagram generation logic goes here.
+    """
+    def inner(*args, **kwargs) -> Any:
+        def warn_missing(missing_name: str, error: str) -> None:
+            warnings.warn(
+                f"""There was an attempt to generate the {missing_name} missing values diagrams, but this failed.
+To hide this warning, disable the calculation
+(using `df.profile_report(missing_diagrams={{"{missing_name}": False}}`)
+If this is problematic for your use case, please report this as an issue:
+https://github.com/ydataai/ydata-profiling/issues
+(include the error message: '{error}')"""
+            )
+
+        try:
+            return fn(*args, **kwargs)
+        except ValueError as e:
+            warn_missing(name, str(e))
+
+    return inner"""
     def inner(*args, **kwargs) -> Any:
         def warn_missing(missing_name: str, error: str) -> None:
             warnings.warn(

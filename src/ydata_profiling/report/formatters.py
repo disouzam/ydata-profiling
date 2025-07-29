@@ -21,6 +21,20 @@ def list_args(func: Callable) -> Callable:
     """
 
     def inner(arg: Any, *args: Any, **kwargs: Any) -> Any:
+        """
+    Applies a function to the given argument(s). If the argument is a list,
+    the function is applied to each element in the list. Otherwise, the function 
+    is applied directly to the argument.
+
+    Parameters:
+    arg (Any): The input argument which can be a single value or a list of values.
+    *args (Any): Additional positional arguments to be passed to the function.
+    **kwargs (Any): Additional keyword arguments to be passed to the function.
+
+    Returns:
+    Any: A list of results if the input argument is a list; otherwise, 
+         returns the result of applying the function to the input argument.
+    """
         if isinstance(arg, list):
             return [func(v, *args, **kwargs) for v in arg]
 
@@ -96,6 +110,34 @@ def fmt_percent(value: float, edge_cases: bool = True) -> str:
 
 @list_args
 def fmt_timespan(num_seconds: Any, detailed: bool = False, max_units: int = 3) -> str:
+    """
+    Format a duration specified in seconds into a human-readable string.
+
+    This function takes a time duration given in seconds and converts it into a more understandable format 
+    using appropriate units such as seconds, minutes, hours, etc. It can provide a detailed output or a shorter 
+    version depending on the parameters provided.
+
+    Args:
+        num_seconds (Any): The time duration to be formatted. This can be an integer, float, or a timedelta object.
+        detailed (bool, optional): If set to True, the output will include smaller time units (e.g., seconds and milliseconds). 
+                                   If False, only the largest relevant units will be included. Defaults to False.
+        max_units (int, optional): The maximum number of different units to include in the output. 
+                                   This parameter only applies when 'detailed' is False. Defaults to 3.
+
+    Returns:
+        str: A human-readable string representing the formatted time duration.
+
+    Example:
+        >>> fmt_timespan(3661)
+        '1 hour and 1 minute'
+        >>> fmt_timespan(59)
+        '59 seconds'
+        >>> fmt_timespan(120, detailed=True)
+        '2 minutes'
+    
+    Note:
+        The function uses units from nanoseconds to years, and properly handles pluralization.
+    """
     # From the `humanfriendly` module (without additional dependency)
     # https://github.com/xolox/python-humanfriendly/
     # Author: Peter Odding <peter@peterodding.com>
@@ -223,6 +265,34 @@ def fmt_timespan(num_seconds: Any, detailed: bool = False, max_units: int = 3) -
 def fmt_timespan_timedelta(
     delta: Any, detailed: bool = False, max_units: int = 3, precision: int = 10
 ) -> str:
+    """delta: Any, detailed: bool = False, max_units: int = 3, precision: int = 10
+) -> str:
+    """
+    Formats a given time delta (pd.Timedelta) or numeric value into a human-readable string representation.
+
+    Parameters:
+    ----------
+    delta : Any
+        The time delta value, which can be a pandas Timedelta object or a numeric value (e.g., int or float).
+    detailed : bool, optional
+        If True, the function provides a more detailed format for the output. Default is False.
+    max_units : int, optional
+        The maximum number of time units to include in the output. Default is 3.
+    precision : int, optional
+        The number of decimal places to include for numeric values. Default is 10.
+
+    Returns:
+    -------
+    str
+        A string representation of the time delta formatted according to the specified parameters. 
+        If the input is not a pd.Timedelta, it returns a formatted numeric string.
+    
+    Notes:
+    -----
+    The function first checks if the input 'delta' is a pd.Timedelta instance. If so, it calculates the total
+    number of seconds and formats it accordingly. If not, it falls back to formatting the numeric value using
+    the specified precision.
+    """
     if isinstance(delta, pd.Timedelta):
         num_seconds = delta.total_seconds()
         if delta.microseconds > 0:
@@ -304,6 +374,41 @@ def fmt(value: Any) -> str:
 
 @list_args
 def fmt_monotonic(value: int) -> str:
+    """
+    Format a monotonicity descriptor based on the given integer value.
+
+    The function translates an integer input into a descriptive string
+    that indicates the type of monotonicity represented by the value. 
+    The mapping is as follows:
+    
+    - 2: "Strictly increasing"
+    - 1: "Increasing"
+    - 0: "Not monotonic"
+    - -1: "Decreasing"
+    - -2: "Strictly decreasing"
+
+    Parameters:
+    value (int): An integer representing the type of monotonicity. It must 
+                 be in the range of -2 to 2.
+
+    Returns:
+    str: A string description of the monotonicity corresponding to the input value.
+
+    Raises:
+    ValueError: If the input value is not an integer within the range of -2 to 2.
+    """
+    if value == 2:
+        return "Strictly increasing"
+    elif value == 1:
+        return "Increasing"
+    elif value == 0:
+        return "Not monotonic"
+    elif value == -1:
+        return "Decreasing"
+    elif value == -2:
+        return "Strictly decreasing"
+    else:
+        raise ValueError("Value should be integer ranging from -2 to 2.")"""
     if value == 2:
         return "Strictly increasing"
     elif value == 1:
@@ -336,6 +441,26 @@ def help(title: str, url: Optional[str] = None) -> str:
 
 @list_args
 def fmt_badge(value: str) -> str:
+    """
+    Format a string by replacing occurrences of numbers enclosed in parentheses with HTML 
+    span elements styled as badges.
+
+    This function searches for patterns in the input string that match the 
+    regex pattern `(\d+)` contained within parentheses. Each match is replaced 
+    with a span element that has the class "badge text-bg-secondary align-text-top" 
+    and contains the matched number.
+
+    Args:
+        value (str): The input string that may contain numbers in parentheses.
+
+    Returns:
+        str: The formatted string with numbers in parentheses replaced by styled 
+        badge elements.
+    
+    Example:
+        >>> fmt_badge("This is a test (5) and another test (10).")
+        'This is a test <span class="badge text-bg-secondary align-text-top">5</span> and another test <span class="badge text-bg-secondary align-text-top">10</span>.'
+    """
     return re.sub(
         r"\((\d+)\)",
         r'<span class="badge text-bg-secondary align-text-top">\1</span>',

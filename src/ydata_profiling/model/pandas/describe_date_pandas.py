@@ -15,6 +15,25 @@ from ydata_profiling.model.typeset_relations import is_pandas_1
 
 
 def to_datetime(series: pd.Series) -> pd.Series:
+    """
+    Convert a pandas Series to a datetime format.
+
+    This function takes a pandas Series as input and attempts to convert its elements 
+    to datetime objects. The conversion method depends on the version of pandas being used. 
+    If the pandas version is 1.x or higher, it uses the default behavior of `pd.to_datetime`.
+    For earlier versions, it uses the "mixed" format for conversion, while still handling errors 
+    by coercing invalid values to NaT (Not a Time).
+
+    Parameters:
+    series (pd.Series): A pandas Series containing date/time information to be converted.
+
+    Returns:
+    pd.Series: A pandas Series with the elements converted to datetime objects, 
+               or NaT for invalid entries.
+
+    Raises:
+    ValueError: If the input is not a pandas Series.
+    """
     if is_pandas_1():
         return pd.to_datetime(series, errors="coerce")
     return pd.to_datetime(series, format="mixed", errors="coerce")

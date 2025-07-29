@@ -14,6 +14,39 @@ from ydata_profiling.visualisation.plot import scatter_series
 
 
 def render_image(config: Settings, summary: dict) -> dict:
+    """
+    Render an image summary and associated data for a given configuration and summary dictionary.
+
+    This function builds a detailed structure of image metrics including dimensions, a scatter plot, 
+    and optional EXIF data frequencies, which are then returned in a dictionary format.
+    
+    Parameters:
+    -----------
+    config : Settings
+        An instance of the Settings class containing configuration parameters for the rendering process.
+        
+    summary : dict
+        A dictionary containing summary statistics for the images, which includes metrics such as 
+        minimum, median, and maximum dimensions, area, and EXIF metadata counts.
+
+    Returns:
+    --------
+    dict
+        A dictionary mapping template variable names to their respective content, including the rendered 
+        tables and plots that summarize the image data.
+
+    Notes:
+    ------
+    All dimension properties provided in the summary are in pixels. This function constructs tables 
+    for various image metrics and an optional scatter plot to visualize image sizes, facilitating 
+    better analysis of image data.
+
+    The function relies on the presence of specific keys within the summary dictionary:
+    - "varid": Unique identifier for the image variables.
+    - "n_freq_table_max": Maximum number of entries to display in frequency tables.
+    - "image_dimensions": Details about the dimensions and properties of the images.
+    - Optional "exif_keys_counts" and "exif_data" for EXIF-related information if present in the summary.
+    """
     varid = summary["varid"]
     n_freq_table_max = config.n_freq_table_max
     redact = config.vars.cat.redact

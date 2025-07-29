@@ -23,6 +23,17 @@ from ydata_profiling.visualisation.utils import plot_360_n0sc0pe
 
 
 def format_fn(tick_val: int, tick_pos: Any) -> str:
+    """
+    Formats a given tick value (timestamp) into a human-readable datetime string.
+
+    Args:
+        tick_val (int): The timestamp value to be converted, representing the number of seconds since the epoch.
+        tick_pos (Any): The position of the tick (not used in the current implementation).
+
+    Returns:
+        str: A formatted string representing the date and time in the format "YYYY-MM-DD HH:MM:SS".
+    """
+    return convert_timestamp_to_datetime(tick_val).strftime("%Y-%m-%d %H:%M:%S")"""
     return convert_timestamp_to_datetime(tick_val).strftime("%Y-%m-%d %H:%M:%S")
 
 
@@ -31,6 +42,55 @@ def _plot_word_cloud(
     series: Union[pd.Series, List[pd.Series]],
     figsize: tuple = (6, 4),
 ) -> plt.Figure:
+    """config: Settings,
+    series: Union[pd.Series, List[pd.Series]],
+    figsize: tuple = (6, 4),
+) -> plt.Figure:
+    """
+    Generate a word cloud plot for one or more pandas Series.
+
+    This function takes a configuration object and one or more pandas Series,
+    converts each Series into a dictionary of word frequencies, and generates
+    a word cloud for each Series. The resulting word clouds are displayed in
+    subplots within a single figure.
+
+    Parameters:
+    ----------
+    config : Settings
+        An object containing the configuration settings, including font path
+        for the word cloud.
+        
+    series : Union[pd.Series, List[pd.Series]]
+        A pandas Series or a list of pandas Series. Each Series should contain
+        word frequencies or text data from which to generate the word cloud.
+
+    figsize : tuple, optional
+        The size of the figure to create, default is (6, 4).
+
+    Returns:
+    -------
+    plt.Figure
+        A matplotlib Figure object containing the generated word cloud(s).
+    """
+    if not isinstance(series, list):
+        series = [series]
+    plot = plt.figure(figsize=figsize)
+    for i, series_data in enumerate(series):
+        word_dict = series_data.to_dict()
+        wordcloud = WordCloud(
+            font_path=config.plot.font_path,
+            background_color="white",
+            random_state=123,
+            width=300,
+            height=200,
+            scale=2,
+        ).generate_from_frequencies(word_dict)
+
+        ax = plot.add_subplot(1, len(series), i + 1)
+        ax.imshow(wordcloud)
+        ax.axis("off")
+
+    return plot"""
     if not isinstance(series, list):
         series = [series]
     plot = plt.figure(figsize=figsize)
@@ -130,6 +190,26 @@ def _plot_histogram(
 
 @manage_matplotlib_context()
 def plot_word_cloud(config: Settings, word_counts: pd.Series) -> str:
+    """```python
+def plot_word_cloud(config: Settings, word_counts: pd.Series) -> str:
+    """
+    Generates and displays a word cloud based on the provided word counts.
+
+    This function utilizes the given configuration settings to plot a word cloud 
+    using the specified word counts in a pandas Series. It manages the Matplotlib context 
+    to ensure that the plotting environment is correctly set up. After plotting the word cloud, 
+    it calls the function to execute a 360-degree inspection and returns the result.
+
+    Args:
+        config (Settings): An instance of the Settings class containing configuration options 
+                           for generating the word cloud.
+        word_counts (pd.Series): A pandas Series containing words as index and their corresponding 
+                                 frequency counts as values for the word cloud.
+
+    Returns:
+        str: The result of the plot_360_n0sc0pe function, providing additional insights or data 
+             derived from the plotting process.
+    """
     _plot_word_cloud(config=config, series=word_counts)
     return plot_360_n0sc0pe(config)
 
@@ -450,6 +530,42 @@ def _plot_pie_chart(
     """
 
     def make_autopct(values: pd.Series) -> Callable:
+        """
+    Generate a function to format the percentage values for a pie chart.
+
+    This function returns a callable that takes a percentage value as input
+    and returns a formatted string showing the percentage and the corresponding
+    absolute value based on the total of the provided values.
+
+    Parameters:
+    ----------
+    values : pd.Series
+        A pandas Series containing the values to be represented in the pie chart.
+        This series will be used to calculate the total value for percentage 
+        calculations.
+
+    Returns:
+    -------
+    Callable
+        A function that takes a float (percentage) and returns a formatted string 
+        with the percentage and the actual value derived from the total of the 
+        provided values.
+
+    Examples:
+    --------
+    >>> import pandas as pd
+    >>> values = pd.Series([10, 20, 30])
+    >>> autopct_fn = make_autopct(values)
+    >>> result = autopct_fn(20)
+    >>> print(result)
+    '20.0%  (20)'
+    """
+    def my_autopct(pct: float) -> str:
+        total = np.sum(values)
+        val = int(round(pct * total / 100.0))
+        return f"{pct:.1f}%  ({val:d})"
+
+    return my_autopct"""
         def my_autopct(pct: float) -> str:
             total = np.sum(values)
             val = int(round(pct * total / 100.0))
@@ -541,6 +657,20 @@ def cat_frequency_plot(
 
 
 def create_comparison_color_list(config: Settings) -> List[str]:
+    """
+    Generate a list of colors for comparison based on primary colors and labels defined in the provided configuration.
+
+    This function takes a configuration object of type Settings, retrieves the primary colors and labels from the 
+    HTML style settings, and generates a color map. If the number of primary colors is less than the number of labels, 
+    a linear segmented color map is created using the initial and final colors from the primary colors. The function then 
+    returns a list of hexadecimal color strings corresponding to the generated color map.
+
+    Args:
+        config (Settings): An object containing the configuration settings, including primary colors and labels.
+
+    Returns:
+        List[str]: A list of hexadecimal color strings representing the colors for comparison.
+    """
     colors = config.html.style.primary_colors
     labels = config.html.style._labels
 
@@ -556,6 +686,36 @@ def _format_ts_date_axis(
     series: pd.Series,
     axis: matplotlib.axis.Axis,
 ) -> matplotlib.axis.Axis:
+    """series: pd.Series,
+    axis: matplotlib.axis.Axis,
+) -> matplotlib.axis.Axis:
+    """
+    Format the x-axis of a given matplotlib axis to display datetime ticks.
+
+    This function checks if the index of the provided pandas Series is of type 
+    DatetimeIndex. If it is, it configures the x-axis of the supplied axis 
+    object to use an automatic date locator and a concise date formatter.
+
+    Parameters:
+    ----------
+    series : pd.Series
+        A pandas Series object whose index is expected to be a DatetimeIndex for 
+        formatting the x-axis.
+
+    axis : matplotlib.axis.Axis
+        An instance of matplotlib axis to be formatted.
+
+    Returns:
+    -------
+    matplotlib.axis.Axis
+        The formatted axis object with datetime ticks.
+    """
+    if isinstance(series.index, pd.DatetimeIndex):
+        locator = AutoDateLocator()
+        axis.xaxis.set_major_locator(locator)
+        axis.xaxis.set_major_formatter(ConciseDateFormatter(locator))
+
+    return axis"""
     if isinstance(series.index, pd.DatetimeIndex):
         locator = AutoDateLocator()
         axis.xaxis.set_major_locator(locator)
@@ -716,6 +876,25 @@ def mini_ts_plot(
 
 
 def _get_ts_lag(config: Settings, series: pd.Series) -> int:
+    """
+    Calculate the time series lag for an input series based on the configuration settings.
+
+    This function retrieves the lag value specified in the configuration and ensures
+    that the lag does not exceed half the length of the series minus one.
+
+    Parameters:
+    ----------
+    config : Settings
+        A configuration object that contains various settings, including the lag value.
+    series : pd.Series
+        A pandas Series representing the time series data for which the lag is to be calculated.
+
+    Returns:
+    -------
+    int
+        The determined lag value, which is the minimum between the configured lag and
+        half the length of the series minus one.
+    """
     lag = config.vars.timeseries.pacf_acf_lag
     max_lag_size = (len(series) // 2) - 1
     return np.min([lag, max_lag_size])
@@ -724,6 +903,30 @@ def _get_ts_lag(config: Settings, series: pd.Series) -> int:
 def _plot_acf_pacf(
     config: Settings, series: pd.Series, figsize: tuple = (15, 5)
 ) -> str:
+    """config: Settings, series: pd.Series, figsize: tuple = (15, 5)
+) -> str:
+    """
+    Plots the Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) 
+    of a given time series.
+
+    This function generates two subplots: one for the ACF and one for the PACF, 
+    using the specified configurations and color settings from the provided config. 
+    The time series data is processed to remove any NaN values before plotting.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class containing configuration and style settings.
+    series : pd.Series
+        A pandas Series containing the time series data to be analyzed.
+    figsize : tuple, optional
+        The size of the figure for the subplots (default is (15, 5)).
+
+    Returns:
+    -------
+    str
+        The result of the plot_360_n0sc0pe function, which is called after plotting the ACF and PACF.
+    """
     color = config.html.style.primary_colors[0]
 
     lag = _get_ts_lag(config, series)
@@ -759,6 +962,26 @@ def _plot_acf_pacf(
 def _plot_acf_pacf_comparison(
     config: Settings, series: List[pd.Series], figsize: tuple = (15, 5)
 ) -> str:
+    """config: Settings, series: List[pd.Series], figsize: tuple = (15, 5)
+) -> str:
+    """
+    Plots the AutoCorrelation Function (ACF) and Partial AutoCorrelation Function (PACF) 
+    for a list of time series, comparing their behaviors in a single figure.
+
+    This function generates ACF and PACF plots for each time series provided in the 
+    `series` list and arranges them in subplots. Each subplot is colored according 
+    to the configuration settings. The function also customizes the appearance of the plots 
+    and adds titles only to the first set of ACF and PACF plots.
+
+    Args:
+        config (Settings): Configuration settings containing style and color information.
+        series (List[pd.Series]): A list of pandas Series representing the time series data to be plotted.
+        figsize (tuple, optional): A tuple representing the size of the figure. Defaults to (15, 5).
+
+    Returns:
+        str: A string indicating the completion of the plotting action, 
+             likely related to finalizing the plots in a specific context or viewer.
+    """
     colors = config.html.style.primary_colors
     n_labels = len(config.html.style._labels)
     colors = create_comparison_color_list(config)
@@ -801,6 +1024,36 @@ def _plot_acf_pacf_comparison(
 def plot_acf_pacf(
     config: Settings, series: Union[list, pd.Series], figsize: tuple = (15, 5)
 ) -> str:
+    """config: Settings, series: Union[list, pd.Series], figsize: tuple = (15, 5)
+) -> str:
+    """
+    Plots the Autocorrelation Function (ACF) and Partial Autocorrelation Function (PACF) 
+    for the given time series data.
+
+    This function accepts either a list of series or a single Pandas Series. Depending on 
+    the type of the input series, it will call the appropriate internal function to perform 
+    the plotting. The resulting plots will visualize the correlation of the time series data 
+    with its past values, helping to identify potential lags and seasonality.
+
+    Parameters:
+    ----------
+    config : Settings
+        A configuration object containing settings for the plot.
+    series : Union[list, pd.Series]
+        A list of time series data or a single time series represented as a Pandas Series.
+    figsize : tuple, optional
+        The size of the figure to be created, default is (15, 5).
+
+    Returns:
+    -------
+    str
+        A message indicating the completion of the plotting process.
+    
+    Notes:
+    -----
+    - The function uses a context manager to manage Matplotlib's plotting context.
+    - Ensure that the input series are properly formatted for accurate plotting.
+    """
     if isinstance(series, list):
         return _plot_acf_pacf_comparison(config, series, figsize)
     else:
@@ -814,6 +1067,43 @@ def _prepare_heatmap_data(
     max_entities: int = 5,
     selected_entities: Optional[List[str]] = None,
 ) -> pd.DataFrame:
+    """dataframe: pd.DataFrame,
+    entity_column: str,
+    sortby: Optional[Union[str, list]] = None,
+    max_entities: int = 5,
+    selected_entities: Optional[List[str]] = None,
+) -> pd.DataFrame:
+    """
+    Prepares data for heatmap visualization by processing the input DataFrame.
+
+    This function aggregates data based on the specified entity column and optional sorting criteria.
+    It handles date conversions, creates bins for the sorting key, and formats the data for heatmap representation.
+
+    Parameters:
+    ----------
+    dataframe : pd.DataFrame
+        The input DataFrame containing the data to be processed.
+    entity_column : str
+        The name of the column in the DataFrame that represents the entities to be visualized.
+    sortby : Optional[Union[str, list]], default=None
+        The column(s) to sort the data by. If None, sorting will be based on the DataFrame index.
+    max_entities : int, default=5
+        The maximum number of entities to be included in the resulting DataFrame.
+    selected_entities : Optional[List[str]], default=None
+        A list of specific entities to include in the output. If None, the top `max_entities` will be returned.
+
+    Returns:
+    -------
+    pd.DataFrame
+        A DataFrame formatted for heatmap visualization, containing counts of occurrences
+        in specified bins for each entity.
+
+    Raises:
+    ------
+    ValueError
+        If the sorting key cannot be converted to a datetime format or if the dtype of 
+        the sorting key is not supported.
+    """
     if sortby is None:
         sortbykey = "_index"
         df = dataframe[entity_column].copy().reset_index()
@@ -859,6 +1149,45 @@ def _create_timeseries_heatmap(
     figsize: Tuple[int, int] = (12, 5),
     color: str = "#337ab7",
 ) -> plt.Axes:
+    """df: pd.DataFrame,
+    figsize: Tuple[int, int] = (12, 5),
+    color: str = "#337ab7",
+) -> plt.Axes:
+    """
+    Creates a heatmap for a given time series DataFrame.
+
+    This function generates a heatmap visualization of a time series data using 
+    the provided DataFrame. It utilizes a color gradient from white to a specified 
+    color for better representation of the data values.
+
+    Parameters:
+    ----------
+    df : pd.DataFrame
+        A Pandas DataFrame containing the time series data to be visualized.
+    
+    figsize : Tuple[int, int], optional
+        A tuple representing the size of the figure (width, height) in inches. Default is (12, 5).
+
+    color : str, optional
+        The color used for the heatmap. The default color is "#337ab7".
+
+    Returns:
+    -------
+    plt.Axes
+        The Axes object containing the heatmap, which can be further customized if needed.
+    """
+    _, ax = plt.subplots(figsize=figsize)
+    cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
+        "report", ["white", color], N=64
+    )
+    pc = ax.pcolormesh(df, edgecolors=ax.get_facecolor(), linewidth=0.25, cmap=cmap)
+    pc.set_clim(0, np.nanmax(df))
+    ax.set_yticks([x + 0.5 for x in range(len(df))])
+    ax.set_yticklabels(df.index)
+    ax.set_xticks([])
+    ax.set_xlabel("Time")
+    ax.invert_yaxis()
+    return ax"""
     _, ax = plt.subplots(figsize=figsize)
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list(
         "report", ["white", color], N=64
@@ -907,6 +1236,28 @@ def timeseries_heatmap(
 def _set_visibility(
     axis: matplotlib.axis.Axis, tick_mark: str = "none"
 ) -> matplotlib.axis.Axis:
+    """axis: matplotlib.axis.Axis, tick_mark: str = "none"
+) -> matplotlib.axis.Axis:
+    """
+    Set the visibility of the axis spines and configure tick marks.
+
+    This function hides all spines of the given axis and sets the position 
+    of the x and y axis tick marks as specified by the `tick_mark` parameter. 
+    The `tick_mark` can be set to "none", "top", "bottom", "left", or "right" 
+    to control which sides the ticks will appear on.
+
+    Parameters:
+    axis (matplotlib.axis.Axis): The Matplotlib axis object on which the visibility settings are to be applied.
+    tick_mark (str): The position of the tick marks on the axis. Defaults to "none". 
+
+    Returns:
+    matplotlib.axis.Axis: The modified axis object with updated visibility settings.
+    """
+    for anchor in ["top", "right", "bottom", "left"]:
+        axis.spines[anchor].set_visible(False)
+    axis.xaxis.set_ticks_position(tick_mark)
+    axis.yaxis.set_ticks_position(tick_mark)
+    return axis"""
     for anchor in ["top", "right", "bottom", "left"]:
         axis.spines[anchor].set_visible(False)
     axis.xaxis.set_ticks_position(tick_mark)

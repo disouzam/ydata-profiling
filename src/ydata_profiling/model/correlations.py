@@ -17,6 +17,36 @@ except ImportError:
 class Correlation:
     @staticmethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -24,6 +54,36 @@ class Auto(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -31,6 +91,36 @@ class Spearman(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -38,6 +128,36 @@ class Pearson(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -45,6 +165,36 @@ class Kendall(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -52,6 +202,36 @@ class Cramers(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
@@ -59,10 +239,60 @@ class PhiK(Correlation):
     @staticmethod
     @multimethod
     def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+        """@multimethod
+def compute(config: Settings, df: Sized, summary: dict) -> Optional[Sized]:
+    """
+    Computes a result based on the provided configuration, data frame, and summary.
+
+    This is a static method that utilizes multiple dispatch to provide varying implementations
+    depending on the input types. The method is expected to be overridden in derived classes.
+
+    Parameters:
+    ----------
+    config : Settings
+        An instance of the Settings class that contains configuration options for the computation.
+    
+    df : Sized
+        A data structure that implements the Sized interface, typically representing the data to be processed.
+    
+    summary : dict
+        A dictionary containing summary information relevant to the computation.
+
+    Returns:
+    -------
+    Optional[Sized]
+        Returns a Sized object as the result of the computation or None if no result is applicable.
+
+    Raises:
+    ------
+    NotImplementedError
+        This exception is raised if the method is called without an overriding implementation.
+    """
+    raise NotImplementedError()"""
         raise NotImplementedError()
 
 
 def warn_correlation(correlation_name: str, error: str) -> None:
+    """
+    Emits a warning when an attempt to calculate a specified correlation fails.
+
+    This function generates a warning message indicating that the calculation 
+    of a correlation with the given name has failed. It also provides instructions 
+    on how to suppress this warning by disabling the calculation and suggests 
+    reporting the issue if it is problematic.
+
+    Parameters:
+    ----------
+    correlation_name : str
+        The name of the correlation that failed to be calculated.
+    
+    error : str
+        The error message associated with the failure of the correlation calculation.
+
+    Returns:
+    -------
+    None
+    """
     warnings.warn(
         f"""There was an attempt to calculate the {correlation_name} correlation, but this failed.
 To hide this warning, disable the calculation
@@ -135,6 +365,21 @@ def perform_check_correlation(
 
 
 def get_active_correlations(config: Settings) -> List[str]:
+    """
+    Retrieves a list of active correlation names from the given configuration.
+
+    This function iterates over the correlation settings in the provided
+    `config` object and collects the names of correlations that are set 
+    to be calculated (i.e., where `calculate` is True).
+
+    Args:
+        config (Settings): An instance of the Settings class containing 
+                           correlation configurations.
+
+    Returns:
+        List[str]: A list of names of correlations that are active 
+                   (those marked for calculation).
+    """
     correlation_names = [
         correlation_name
         for correlation_name in config.correlations.keys()

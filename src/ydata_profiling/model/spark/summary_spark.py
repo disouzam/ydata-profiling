@@ -72,6 +72,34 @@ def spark_get_series_descriptions(
     typeset: VisionsTypeset,
     pbar: tqdm,
 ) -> dict:
+    """config: Settings,
+    df: DataFrame,
+    summarizer: BaseSummarizer,
+    typeset: VisionsTypeset,
+    pbar: tqdm,
+) -> dict:
+    """
+    Generate descriptive statistics for each column in a Spark DataFrame in a parallelized manner.
+
+    This function processes each column of the provided DataFrame to generate a summary
+    description using the specified summarizer and configurations. The descriptions are
+    computed in parallel to improve efficiency.
+
+    Args:
+        config (Settings): The configuration settings that determine how the summary 
+                           should be calculated.
+        df (DataFrame): The Spark DataFrame containing the data for which to generate 
+                        descriptions.
+        summarizer (BaseSummarizer): An object that provides the summarization methods 
+                                      to be used.
+        typeset (VisionsTypeset): The typeset used for determining the types of the 
+                                   DataFrame columns.
+        pbar (tqdm): A tqdm progress bar instance used to visualize the progress of the 
+                      computation.
+
+    Returns:
+        dict: A dictionary mapping each column name to its respective series description.
+    """
     series_description = {}
 
     def multiprocess_1d(args: tuple) -> Tuple[str, dict]:

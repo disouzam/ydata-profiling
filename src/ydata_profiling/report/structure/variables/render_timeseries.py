@@ -24,6 +24,38 @@ from ydata_profiling.visualisation.plot import (
 
 
 def _render_gap_tab(config: Settings, summary: dict) -> Container:
+    """
+    Renders a gap analysis tab containing statistics and a plot of gaps in a time series.
+
+    This function generates a table with various statistics about gaps, including:
+    - Number of gaps
+    - Minimum gap duration
+    - Maximum gap duration
+    - Mean gap duration
+    - Standard deviation of gap duration
+
+    Additionally, it generates a plot visualizing the gaps over time.
+
+    Args:
+        config (Settings): Configuration settings that dictate formatting and style.
+        summary (dict): A dictionary containing summary statistics and time series data related to gaps. 
+                        It must include the following structure:
+                        {
+                            "gap_stats": {
+                                "n_gaps": int,
+                                "min": timedelta,
+                                "max": timedelta,
+                                "mean": timedelta,
+                                "std": timedelta,
+                                "series": list,
+                                "gaps": list
+                            },
+                            "varid": str
+                        }
+
+    Returns:
+        Container: A Container object that includes a table of gap statistics and a plot of the gaps.
+    """
     gap_stats = [
         {
             "name": "number of gaps",
@@ -82,6 +114,48 @@ def _render_gap_tab(config: Settings, summary: dict) -> Container:
 
 
 def render_timeseries(config: Settings, summary: dict) -> dict:
+    """
+    Render a time series representation including statistical summaries, 
+    visualizations, and various calculated metrics based on the provided 
+    configuration and summary data.
+
+    Parameters:
+    ----------
+    config : Settings
+        An object containing configuration settings for rendering the 
+        time series, including styles and other parameters.
+    
+    summary : dict
+        A dictionary containing statistical summaries and metrics of the 
+        time series data, including but not limited to:
+        - 'varid': Identifier for the variable
+        - 'varname': Name of the variable
+        - 'alerts': List of alerts related to the variable
+        - 'description': Description of the variable
+        - 'n_distinct', 'p_distinct', 'n_missing', 
+          'p_missing', 'n_infinite', 'p_infinite': Statistical values related 
+          to data quality.
+        - 'mean', 'min', 'max', 'n_zeros', 'p_zeros', 
+          'memory_size': Descriptive statistics of the time series.
+        - 'histogram': Histogram data for visual representation.
+        - 'series': The actual time series data.
+
+    Returns:
+    -------
+    dict
+        A dictionary of template variables ready for rendering that includes 
+        various statistics, plots, and tables of the time series data. It 
+        includes a grid layout of information at the top and a tabbed 
+        section at the bottom consisting of statistics, histogram, extreme 
+        values, and autocorrelation plots.
+
+    Notes:
+    -----
+    - The function takes care of formatting numbers, generating plots, 
+      and organizing the rendered output into a structured format.
+    - Data visualization includes ACF and PACF plots and time-series 
+      plots to aid in understanding the behavior of the time series data.
+    """
     varid = summary["varid"]
     template_variables = render_common(config, summary)
     image_format = config.plot.image_format

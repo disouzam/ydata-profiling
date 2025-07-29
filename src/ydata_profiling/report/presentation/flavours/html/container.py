@@ -4,6 +4,30 @@ from ydata_profiling.report.presentation.flavours.html import templates
 
 class HTMLContainer(Container):
     def render(self) -> str:
+        """
+    Renders the appropriate HTML template based on the specified sequence type.
+
+    The method checks the value of `self.sequence_type` and renders one 
+    of several predefined templates accordingly. The data required for 
+    rendering these templates is retrieved from `self.content`.
+
+    The following sequence types are supported:
+
+    - "list": Renders the `list.html` template, using `anchor_id` and `items` from `self.content`.
+    - "accordion": Renders the `list.html` template, using `anchor_id` and `items` from `self.content`.
+    - "named_list": Renders the `named_list.html` template, using `anchor_id` and `items` from `self.content`.
+    - "tabs": Renders the `tabs.html` template, using `tabs`, `anchor_id`, and `nested` from `self.content`.
+    - "select": Renders the `select.html` template, using `tabs`, `anchor_id`, and `nested` from `self.content`.
+    - "sections": Renders the `sections.html` template, using `sections` and `full_width` from `self.content`.
+    - "grid": Renders the `grid.html` template, using `items` from `self.content`.
+    - "batch_grid": Renders the `batch_grid.html` template, using `items`, `batch_size`, `titles`, and `subtitles` from `self.content`.
+
+    Raises:
+        ValueError: If the `sequence_type` is not recognized.
+
+    Returns:
+        str: The rendered HTML string of the template.
+    """
         if self.sequence_type in ["list", "accordion"]:
             return templates.template("sequence/list.html").render(
                 anchor_id=self.content["anchor_id"], items=self.content["items"]

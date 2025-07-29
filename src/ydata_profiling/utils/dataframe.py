@@ -225,6 +225,32 @@ def slugify(value: str, allow_unicode: bool = False) -> str:
 
 
 def sort_column_names(dct: dict, sort: Optional[str]) -> dict:
+    """
+    Sorts the keys of a given dictionary based on the specified sorting order.
+
+    Args:
+        dct (dict): The dictionary whose keys are to be sorted.
+        sort (Optional[str]): A string indicating the sorting order. 
+                              It can be 'ascending' (or 'asc') for 
+                              ascending order, 'descending' (or 'desc') 
+                              for descending order, or None for no sorting.
+
+    Returns:
+        dict: A new dictionary with keys sorted according to the specified order.
+
+    Raises:
+        ValueError: If 'sort' is not None, 'ascending', or 'descending'.
+
+    Example:
+        >>> sort_column_names({'b': 1, 'a': 2}, 'asc')
+        {'a': 2, 'b': 1}
+        
+        >>> sort_column_names({'b': 1, 'a': 2}, 'desc')
+        {'b': 1, 'a': 2}
+        
+        >>> sort_column_names({'b': 1, 'a': 2}, None)
+        {'b': 1, 'a': 2}
+    """
     if sort is None:
         return dct
 

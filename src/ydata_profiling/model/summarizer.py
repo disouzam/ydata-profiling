@@ -47,6 +47,43 @@ class PandasProfilingSummarizer(BaseSummarizer):
     """The default YData Profiling summarizer"""
 
     def __init__(self, typeset: VisionsTypeset, *args, **kwargs):
+        """
+    Initializes the class with a summary map and a typeset.
+
+    This constructor defines a mapping of data types to their respective 
+    description functions, which are used to summarize the characteristics 
+    of different data types. The available categories include Unsupported, 
+    Numeric, DateTime, Text, Categorical, Boolean, URL, Path, File, Image, 
+    and TimeSeries.
+
+    Parameters:
+    -----------
+    typeset : VisionsTypeset
+        An instance of VisionsTypeset that specifies the type of data being processed.
+
+    *args : variable length argument list
+        Additional positional arguments to be passed to the superclass initializer.
+
+    **kwargs : variable length keyword arguments
+        Additional keyword arguments to be passed to the superclass initializer.
+
+    Summary Map:
+    -------------
+    - "Unsupported": Functions to describe unsupported types.
+    - "Numeric": Function to describe numeric 1D data.
+    - "DateTime": Function to describe date 1D data.
+    - "Text": Function to describe text 1D data.
+    - "Categorical": Function to describe categorical 1D data.
+    - "Boolean": Function to describe boolean 1D data.
+    - "URL": Function to describe URL 1D data.
+    - "Path": Function to describe path 1D data.
+    - "File": Function to describe file 1D data.
+    - "Image": Function to describe image 1D data.
+    - "TimeSeries": Function to describe time series 1D data.
+
+    This constructor calls the initializer of the superclass with the 
+    summary map, typeset, and any additional arguments provided.
+    """
         summary_map: Dict[str, List[Callable]] = {
             "Unsupported": [
                 describe_counts,
@@ -98,6 +135,25 @@ def format_summary(summary: Union[BaseDescription, dict]) -> dict:
     """
 
     def fmt(v: Any) -> Any:
+        """
+    Recursively formats the input value `v`.
+
+    This function checks the type of the input value and processes it accordingly:
+    - If `v` is a dictionary, it applies the `fmt` function to each key-value pair recursively, returning a new dictionary with formatted values.
+    - If `v` is a pandas Series, it converts the Series to a dictionary and applies the `fmt` function to that dictionary.
+    - If `v` is a tuple containing exactly two numpy arrays, it returns a dictionary with keys 'counts' and 'bin_edges', where 'counts' corresponds to the first array and 'bin_edges' corresponds to the second array, both converted to lists.
+    - For all other types, it simply returns the value as is.
+
+    Parameters:
+    ----------
+    v : Any
+        The input value to be formatted. It can be a dictionary, pandas Series, a tuple of numpy arrays, or any other type.
+
+    Returns:
+    -------
+    Any
+        The formatted value based on the type of the input.
+    """
         if isinstance(v, dict):
             return {k: fmt(va) for k, va in v.items()}
         else:
@@ -120,6 +176,39 @@ def format_summary(summary: Union[BaseDescription, dict]) -> dict:
 
 
 def _redact_column(column: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Redact sensitive information in specific fields of a given dictionary.
+
+    This function processes the input dictionary to redact certain keys and values 
+    based on predefined criteria. Specifically, it transforms the contents of the 
+    specified fields by replacing their keys or values with a redacted format 
+    (i.e., "REDACTED_{i}" where {i} is an index). 
+
+    The following fields are targeted for key redaction:
+    - "block_alias_char_counts"
+    - "block_alias_values"
+    - "category_alias_char_counts"
+    - "category_alias_values"
+    - "character_counts"
+    - "script_char_counts"
+    - "value_counts_index_sorted"
+    - "value_counts_without_nan"
+    - "word_counts"
+
+    The following field is targeted for value redaction:
+    - "first_rows"
+
+    If the target fields contain dictionaries as values, the function will apply
+    redaction on the keys or values of those dictionaries accordingly.
+
+    Args:
+        column (Dict[str, Any]): A dictionary representing a column of data, 
+                                  which may contain sensitive information.
+
+    Returns:
+        Dict[str, Any]: A new dictionary with sensitive information redacted 
+                         based on the specified rules.
+    """
     def redact_key(data: Dict[str, Any]) -> Dict[str, Any]:
         return {f"REDACTED_{i}": v for i, (_, v) in enumerate(data.items())}
 

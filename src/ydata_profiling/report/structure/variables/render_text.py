@@ -22,6 +22,45 @@ from ydata_profiling.visualisation.plot import plot_word_cloud
 
 
 def render_text(config: Settings, summary: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Renders textual representations of summary statistics based on the given configuration.
+
+    This function generates a structured representation of the summary data, including 
+    various statistics and visualizations, such as tables and word clouds. Depending 
+    on the configuration, some data may be redacted.
+
+    Args:
+        config (Settings): The settings configuration that dictates how the data is rendered.
+        summary (Dict[str, Any]): A dictionary containing summary statistics and information 
+                                   about the variable, including:
+                                   - varid: Unique identifier for the variable.
+                                   - varname: Name of the variable.
+                                   - type: Data type of the variable.
+                                   - alerts: A list of alerts related to the variable.
+                                   - description: A description of the variable.
+                                   - n_distinct: Number of distinct values.
+                                   - p_distinct: Proportion of distinct values.
+                                   - n_missing: Number of missing values.
+                                   - p_missing: Proportion of missing values.
+                                   - memory_size: Size of memory consumed by the variable.
+                                   - word_counts: Counts of words for generating visualizations.
+                                   - first_rows: Displayed first rows of the variable.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing the rendered template variables structured 
+                        into 'top' and 'bottom' containers for display purposes.
+
+    The 'top' container includes:
+      - VariableInfo object with variable metadata.
+      - A table summarizing key statistics.
+      - A mini word cloud image if word counts are available.
+
+    The 'bottom' container may include:
+      - An overview of the variable's characteristics.
+      - A frequency table of common words.
+      - An image of the word cloud.
+      - A representation of character counts if applicable.
+    """
     if config.vars.text.redact:
         render = render_categorical(config, summary)
         return render

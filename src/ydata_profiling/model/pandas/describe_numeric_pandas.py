@@ -29,6 +29,37 @@ def mad(arr: np.ndarray) -> np.ndarray:
 
 
 def numeric_stats_pandas(series: pd.Series) -> Dict[str, Any]:
+    """
+    Calculate statistical metrics for a given pandas Series.
+
+    This function computes and returns various statistics including the mean, 
+    standard deviation, variance, minimum, maximum, kurtosis, skewness, and 
+    sum of the values in the provided pandas Series.
+
+    Parameters:
+    ----------
+    series : pd.Series
+        A pandas Series containing numeric data for which the statistics 
+        will be calculated.
+
+    Returns:
+    -------
+    Dict[str, Any]
+        A dictionary with the following statistical metrics:
+        - 'mean': The average value of the Series.
+        - 'std': The standard deviation of the Series.
+        - 'variance': The variance of the Series.
+        - 'min': The minimum value in the Series.
+        - 'max': The maximum value in the Series.
+        - 'kurtosis': The unbiased kurtosis using Fisher's definition.
+        - 'skewness': The unbiased skewness of the Series.
+        - 'sum': The total sum of the values in the Series.
+
+    Notes:
+    -----
+    - Kurtosis is normalized such that the kurtosis of a normal distribution is 0.0.
+    - Skewness is normalized by N-1 (the sample skewness).
+    """
     return {
         "mean": series.mean(),
         "std": series.std(),
@@ -46,6 +77,54 @@ def numeric_stats_pandas(series: pd.Series) -> Dict[str, Any]:
 def numeric_stats_numpy(
     present_values: np.ndarray, series: pd.Series, series_description: Dict[str, Any]
 ) -> Dict[str, Any]:
+    """present_values: np.ndarray, series: pd.Series, series_description: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Calculate various numerical statistics for a given series of values using NumPy.
+
+    This function computes the mean, standard deviation, variance, minimum, 
+    maximum, kurtosis, skewness, and sum of the provided numerical data 
+    in a series. It accounts for the frequency of different values in the 
+    series to compute weighted statistics where applicable.
+
+    Parameters:
+    present_values (np.ndarray): A NumPy array containing the numerical values 
+                                 for which the statistics will be calculated.
+    series (pd.Series): A Pandas Series from which to derive kurtosis and skewness.
+    series_description (Dict[str, Any]): A dictionary containing additional 
+                                          information about the series including 
+                                          value counts without NaN.
+
+    Returns:
+    Dict[str, Any]: A dictionary containing the calculated statistics:
+        - mean (float): The weighted average of the index values.
+        - std (float): The sample standard deviation of the present values.
+        - variance (float): The sample variance of the present values.
+        - min (float): The minimum index value.
+        - max (float): The maximum index value.
+        - kurtosis (float): The sample kurtosis of the series (Fisher's definition).
+        - skewness (float): The sample skewness of the series.
+        - sum (float): The weighted sum of the index values.
+
+    If the series does not contain any index values, the function will return NaN 
+    for mean, and NaN for min and max, with standard deviation and variance set to 
+    zero, and kurtosis, skewness, and sum also set to zero.
+
+    Note:
+    The implementation includes a FIXME indicating that the performance can be 
+    optimized by using weights in the computation of standard deviation, 
+    variance, kurtosis, and skewness.
+
+    Example:
+    >>> import numpy as np
+    >>> import pandas as pd
+    >>> from collections import Counter
+    >>> values = np.array([1, 2, 2, 3, 4])
+    >>> series = pd.Series(values)
+    >>> value_counts = Counter(series)
+    >>> series_description = {"value_counts_without_nan": pd.Series(value_counts)}
+    >>> numeric_stats_numpy(values, series, series_description)
+    """
     vc = series_description["value_counts_without_nan"]
     index_values = vc.index.values
 

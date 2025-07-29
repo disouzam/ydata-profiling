@@ -18,6 +18,43 @@ from ydata_profiling.visualisation.plot import histogram, mini_histogram
 
 
 def render_real(config: Settings, summary: dict) -> dict:
+    """
+    Generates a rendered representation of statistical information related to real numbers.
+
+    This function takes in a configuration object and a summary dictionary containing statistical metrics.
+    It produces a set of template variables which include various statistical tables and visualizations such as 
+    histograms, frequency tables, and basic descriptive statistics.
+
+    Args:
+        config (Settings): Configuration settings for customizing the output, including HTML styles and precision.
+        summary (dict): A dictionary containing calculated statistics and alerts related to the real numbers.
+            Expected keys include:
+                - varid (str): The variable identifier.
+                - varname (str): The variable name.
+                - alerts (list): List of alerts associated with the variable.
+                - description (str): Description of the variable.
+                - n_distinct (int): Number of distinct values.
+                - p_distinct (float): Percentage of distinct values.
+                - n_missing (int): Number of missing values.
+                - p_missing (float): Percentage of missing values.
+                - n_infinite (int): Number of infinite values.
+                - p_infinite (float): Percentage of infinite values.
+                - mean (float): Mean of the values.
+                - min (float): Minimum value.
+                - max (float): Maximum value.
+                - n_zeros (int): Number of zeros.
+                - p_zeros (float): Percentage of zeros.
+                - n_negative (int): Number of negative values.
+                - p_negative (float): Percentage of negative values.
+                - memory_size (int): Memory size of the variable.
+                - histogram (list): A list representing a histogram.
+                - Other statistical metrics (e.g., std, cv, kurtosis, mad, skewness, sum, variance, etc.)
+
+    Returns:
+        dict: A dictionary of template variables with rendered information, which includes:
+            - top: A container with variable information, tables, and mini histogram.
+            - bottom: A container with statistical tables, histogram, frequency tables, and extreme values.
+    """
     varid = summary["varid"]
     template_variables = render_common(config, summary)
     image_format = config.plot.image_format

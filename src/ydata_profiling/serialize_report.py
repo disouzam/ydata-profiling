@@ -22,6 +22,17 @@ class SerializeReport:
 
     @property
     def df_hash(self) -> Optional[str]:
+        """def df_hash(self) -> Optional[str]:
+    """
+    Get the hash representation of the DataFrame.
+
+    This property returns a hash value for the DataFrame if available.
+    If no hash is computed or applicable, it returns None.
+
+    Returns:
+        Optional[str]: The hash as a string if it exists, otherwise None.
+    """
+    return None"""
         return None
 
     def dumps(self) -> bytes:

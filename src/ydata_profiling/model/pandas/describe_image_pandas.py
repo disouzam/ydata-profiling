@@ -119,6 +119,20 @@ def extract_exif(image: Image) -> dict:
 
 
 def path_is_image(p: Path) -> bool:
+    """
+    Check if the given path corresponds to an image file.
+
+    This function uses the imghdr module to determine the type of the file
+    at the specified path. It returns True if the file is recognized as an 
+    image type, and False otherwise.
+
+    Args:
+        p (Path): A Path object representing the file path to check.
+
+    Returns:
+        bool: True if the file is an image, False otherwise.
+    """
+    return imghdr.what(p) is not None"""
     return imghdr.what(p) is not None
 
 
@@ -245,6 +259,41 @@ def image_summary(series: pd.Series, exif: bool = False, hash: bool = False) -> 
 def pandas_describe_image_1d(
     config: Settings, series: pd.Series, summary: dict
 ) -> Tuple[Settings, pd.Series, dict]:
+    """config: Settings, series: pd.Series, summary: dict
+) -> Tuple[Settings, pd.Series, dict]:
+    """
+    Generates a summary of a 1D image series by updating the provided summary 
+    dictionary with image metadata.
+
+    This function checks if the provided pandas Series contains any NaN values 
+    or if it has the string accessor. If either condition is not met, it raises 
+    a ValueError. It then updates the summary dictionary with the output of 
+    the `image_summary` function, which processes the EXIF data from the images 
+    in the series.
+
+    Parameters:
+    ----------
+    config : Settings
+        An object containing configuration settings for processing the image series.
+    
+    series : pd.Series
+        A pandas Series object representing a 1D collection of image data. 
+        This Series is expected to have a .str accessor for string operations.
+
+    summary : dict
+        A dictionary that will be updated with image summary data.
+
+    Raises:
+    ------
+    ValueError
+        If the input series contains NaN values or does not have a .str accessor.
+
+    Returns:
+    -------
+    Tuple[Settings, pd.Series, dict]
+        A tuple containing the configuration settings, the original series, 
+        and the updated summary dictionary.
+    """
     if series.hasnans:
         raise ValueError("May not contain NaNs")
     if not hasattr(series, "str"):

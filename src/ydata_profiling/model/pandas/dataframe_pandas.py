@@ -9,6 +9,31 @@ from ydata_profiling.utils.dataframe import rename_index
 
 @check_dataframe.register
 def pandas_check_dataframe(df: pd.DataFrame) -> None:
+    """def pandas_check_dataframe(df: pd.DataFrame) -> None:
+    """
+    Check if the input is a pandas DataFrame.
+
+    This function verifies whether the provided input 'df' is an instance
+    of pandas.DataFrame. If the input is not of the expected type,
+    a warning is issued.
+
+    Parameters:
+    -----------
+    df : pd.DataFrame
+        The object to check for DataFrame type.
+
+    Returns:
+    --------
+    None
+        This function does not return a value. It only issues a warning
+        if the type check fails.
+
+    Raises:
+    -------
+    None
+        This function does not raise exceptions, but will issue a warning
+        if 'df' is not an instance of pandas.DataFrame.
+    """
     if not isinstance(df, pd.DataFrame):
         warnings.warn("df is not of type pandas.DataFrame")
 

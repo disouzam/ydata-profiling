@@ -13,6 +13,22 @@ from ydata_profiling.profile_report import ProfileReport
 
 
 def _should_wrap(v1: Any, v2: Any) -> bool:
+    """
+    Determines whether two values should be treated as equal for wrapping purposes.
+
+    This function checks the types of the input values `v1` and `v2`. It returns `False` if `v1`
+    is a list or a dictionary, as these types should not be wrapped. If both `v1` and `v2` are
+    pandas DataFrames or Series, it checks for their equality using the `equals` method. If neither
+    of these conditions are met, it attempts to compare the values directly. If a ValueError
+    occurs during the comparison, the function returns `False`.
+
+    Parameters:
+    v1 (Any): The first value to compare.
+    v2 (Any): The second value to compare.
+
+    Returns:
+    bool: True if the two values are considered equal for wrapping, False otherwise.
+    """
     if isinstance(v1, (list, dict)):
         return False
 
@@ -28,6 +44,24 @@ def _should_wrap(v1: Any, v2: Any) -> bool:
 
 
 def _update_merge_dict(d1: Any, d2: Any) -> dict:
+    """
+    Merge two dictionaries, d1 and d2, with specific handling for shared keys.
+
+    This function creates a new dictionary that combines the keys and values 
+    from both dictionaries. If a key exists in both dictionaries, the following 
+    rules apply:
+    - If the values for the shared key are equal, that value is kept in the 
+      resulting dictionary.
+    - If the values are not equal, the function will recursively merge them 
+      using another merging strategy.
+
+    Parameters:
+    d1 (Any): The first dictionary to be merged.
+    d2 (Any): The second dictionary to be merged.
+
+    Returns:
+    dict: A new dictionary containing the merged results of d1 and d2.
+    """
     # Unwrap d1 and d2 in new dictionary to keep non-shared keys with **d1, **d2
     # Next unwrap a dict that treats shared keys
     # If two keys have an equal value, we take that value as new value
@@ -46,6 +80,23 @@ def _update_merge_dict(d1: Any, d2: Any) -> dict:
 
 
 def _update_merge_seq(d1: Any, d2: Any) -> Union[list, tuple]:
+    """
+    Merges two sequences (lists or tuples) and returns them in a combined format.
+
+    This function handles the merging of two values, d1 and d2. If both values are lists,
+    it returns them as a tuple. If d1 is a tuple and d2 is a list, it combines them into a 
+    single tuple. For any other combinations, it returns a flattened list that contains 
+    both values, ensuring that if either value is already a list, its contents are
+    included in the resulting list.
+
+    Parameters:
+        d1 (Any): The first value to be merged, can be a list, tuple, or any other type.
+        d2 (Any): The second value to be merged, can be a list, tuple, or any other type.
+
+    Returns:
+        Union[list, tuple]: A tuple if both inputs are lists, a tuple combining a tuple 
+                            with a list, or a flattened list containing the non-list values.
+    """
     # This case happens when values are merged
     # It bundle values in a list, making sure
     # to flatten them if they are already lists
@@ -63,6 +114,26 @@ def _update_merge_seq(d1: Any, d2: Any) -> Union[list, tuple]:
 
 
 def _update_merge_mixed(d1: Any, d2: Any) -> Union[dict, list, tuple]:
+    """
+    Merges two data structures (d1 and d2) based on their types.
+
+    This function checks if both input parameters are dictionaries. 
+    If they are, it invokes the `_update_merge_dict` function to merge them 
+    appropriately. If either of the parameters is not a dictionary, 
+    it calls the `_update_merge_seq` function to handle the merging 
+    of sequences.
+
+    Parameters:
+    d1 (Any): The first data structure to merge, can be a dictionary, 
+              list, or tuple.
+    d2 (Any): The second data structure to merge, can be a dictionary, 
+              list, or tuple.
+
+    Returns:
+    Union[dict, list, tuple]: The merged data structure, which will 
+                               be of the same type as the inputs 
+                               (dictionary, list, or tuple).
+    """
     if isinstance(d1, dict) and isinstance(d2, dict):
         return _update_merge_dict(d1, d2)
     else:
@@ -70,6 +141,35 @@ def _update_merge_mixed(d1: Any, d2: Any) -> Union[dict, list, tuple]:
 
 
 def _update_merge(d1: Optional[dict], d2: dict) -> dict:
+    """```python
+def _update_merge(d1: Optional[dict], d2: dict) -> dict:
+    """
+    Merges two dictionaries, d1 and d2.
+
+    This function updates d1 with the contents of d2. If d1 is None, 
+    it returns d2 directly. It raises a TypeError if either d1 or d2 
+    is not of type dictionary.
+
+    Args:
+        d1 (Optional[dict]): The first dictionary to merge. It can be None.
+        d2 (dict): The second dictionary to merge.
+
+    Returns:
+        dict: The merged dictionary containing the contents of d1 and d2.
+
+    Raises:
+        TypeError: If either d1 or d2 is not of type dictionary.
+    """
+    # For convenience in the loop, allow d1 to be empty initially
+    if d1 is None:
+        return d2
+
+    if not isinstance(d1, dict) or not isinstance(d2, dict):
+        raise TypeError(
+            "Both arguments need to be of type dictionary (ProfileReport.description_set)"
+        )
+
+    return _update_merge_dict(d1, d2)"""
     # For convenience in the loop, allow d1 to be empty initially
     if d1 is None:
         return d2
@@ -110,6 +210,18 @@ def _update_titles(reports: List[ProfileReport]) -> None:
 
 
 def _compare_title(titles: List[str]) -> str:
+    """
+    Compare a list of titles and determine if they are all the same.
+
+    This function takes a list of strings representing titles. If all titles in the list are identical, it returns that title. 
+    If the titles are not the same, it provides a formatted string that compares the titles in a readable format.
+
+    Args:
+        titles (List[str]): A list of title strings to be compared.
+
+    Returns:
+        str: A single title if all titles are identical; otherwise, a comparison string indicating the titles being compared.
+    """
     if all(titles[0] == title for title in titles[1:]):
         return titles[0]
     else:
@@ -121,6 +233,38 @@ def _compare_profile_report_preprocess(
     reports: List[ProfileReport],
     config: Optional[Settings] = None,
 ) -> Tuple[List[str], List[BaseDescription]]:
+    """reports: List[ProfileReport],
+    config: Optional[Settings] = None,
+) -> Tuple[List[str], List[BaseDescription]]:
+    """
+    Preprocesses a list of ProfileReport objects for comparison.
+
+    This function takes a list of ProfileReport instances and an optional 
+    configuration object. It sets the titles of the reports as labels and 
+    adjusts the color scheme for the reports based on the provided configuration 
+    or defaults to the first report's colors if none are provided. The function 
+    also gathers the descriptions from each report and assigns the corresponding 
+    titles to them.
+
+    Args:
+        reports (List[ProfileReport]): A list of ProfileReport instances to be processed.
+        config (Optional[Settings]): An optional configuration object that may contain 
+            custom styling settings. If None, default colors will be used.
+
+    Returns:
+        Tuple[List[str], List[BaseDescription]]:
+            A tuple containing two elements:
+                - A list of strings representing the labels (titles) of the reports.
+                - A list of BaseDescription objects corresponding to the reports, 
+                  with updated titles.
+
+    Raises:
+        IndexError: If the reports list is empty.
+    
+    Notes:
+        The function modifies the `primary_colors` attribute of the report's configuration 
+        based on either the provided `config` or the colors from the first report, if available.
+    """
     # Use titles as labels
     labels = [report.config.title for report in reports]
 
@@ -149,6 +293,25 @@ def _compare_profile_report_preprocess(
 def _compare_dataset_description_preprocess(
     reports: List[BaseDescription],
 ) -> Tuple[List[str], List[BaseDescription]]:
+    """reports: List[BaseDescription],
+) -> Tuple[List[str], List[BaseDescription]]:
+    """
+    Preprocesses a list of dataset description reports.
+
+    This function takes a list of reports, extracts their titles, 
+    and returns a tuple containing a list of titles and the original 
+    list of reports.
+
+    Args:
+        reports (List[BaseDescription]): A list of dataset description 
+                                          reports to be processed.
+
+    Returns:
+        Tuple[List[str], List[BaseDescription]]: A tuple where the first 
+                                                  element is a list of report 
+                                                  titles, and the second element 
+                                                  is the original list of reports.
+    """
     labels = [report.analysis.title for report in reports]
     return labels, reports
 
@@ -229,6 +392,25 @@ def _apply_config(description: BaseDescription, config: Settings) -> BaseDescrip
 
 
 def _is_alert_present(alert: Alert, alert_list: list) -> bool:
+    """```python
+def _is_alert_present(alert: Alert, alert_list: list) -> bool:
+    """
+    Check if a specific alert is present in a list of alerts.
+
+    This function compares the column name and alert type of the given alert 
+    with each alert in the provided alert list to determine if there is a match.
+
+    Parameters:
+    alert (Alert): The alert to check for in the list.
+    alert_list (list): A list of Alert objects to search through.
+
+    Returns:
+    bool: True if the alert is present in the list, False otherwise.
+    """
+    return any(
+        a.column_name == alert.column_name and a.alert_type == alert.alert_type
+        for a in alert_list
+    )"""
     return any(
         a.column_name == alert.column_name and a.alert_type == alert.alert_type
         for a in alert_list
@@ -236,6 +418,27 @@ def _is_alert_present(alert: Alert, alert_list: list) -> bool:
 
 
 def _create_placehoder_alerts(report_alerts: tuple) -> tuple:
+    """
+    Create a tuple of alert lists, ensuring that each alert is either 
+    preserved or replaced with an empty placeholder alert if it is not 
+    present in other alerts.
+
+    This function takes a tuple of alert lists, where each list 
+    corresponds to specific report alerts. It iterates over each alert 
+    and checks its presence in other alert lists. If an alert is not 
+    found in another list, it creates a copy of that alert and marks it 
+    as an empty alert by setting the `_is_empty` attribute to `True`. 
+    The resulting structure is a tuple of lists containing both the 
+    original and placeholder alerts.
+
+    Args:
+        report_alerts (tuple): A tuple containing lists of alerts, where 
+        each list represents alerts for a specific report.
+
+    Returns:
+        tuple: A tuple of lists containing the original alerts and placeholder 
+        alerts for any missing alerts in the respective report alert lists.
+    """
     from copy import copy
 
     fixed: list = [[] for _ in report_alerts]

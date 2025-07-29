@@ -19,6 +19,34 @@ from ydata_profiling.model.summary_algorithms import (
 
 
 def get_character_counts_vc(vc: pd.Series) -> pd.Series:
+    """
+    Count the occurrences of each character in a pandas Series.
+
+    This function takes a pandas Series where the index represents some categories 
+    and the values are strings. It will count the occurrences of each character 
+    in the non-empty strings of the Series, returning a new Series with characters 
+    as the index and their respective counts as values. The results are sorted 
+    in descending order of occurrences.
+
+    Parameters:
+    vc (pd.Series): A pandas Series where the index represents categories 
+                    and the values are strings to be processed.
+
+    Returns:
+    pd.Series: A Series containing characters as the index and their counts 
+                as values, sorted in descending order. Empty strings are excluded 
+                from the results. If there are no characters present, an empty 
+                Series will be returned.
+
+    Example:
+    >>> s = pd.Series(['apple', 'banana', 'apple', ''])
+    >>> get_character_counts_vc(s)
+    a    5
+    p    2
+    b    2
+    n    2
+    l    1
+    ```"""
     series = pd.Series(vc.index, index=vc)
     characters = series[series != ""].apply(list)
     characters = characters.explode()
@@ -45,6 +73,37 @@ def get_character_counts(series: pd.Series) -> Counter:
 
 
 def counter_to_series(counter: Counter) -> pd.Series:
+    """```python
+def counter_to_series(counter: Counter) -> pd.Series:
+    """
+    Convert a Counter object to a Pandas Series.
+
+    This function takes a Counter object as input and returns a Pandas Series
+    where the index consists of the unique items from the Counter and the 
+    values correspond to their counts. If the Counter is empty, an empty Series
+    is returned.
+
+    Parameters:
+    counter (Counter): A Counter object containing elements as keys and their counts as values.
+
+    Returns:
+    pd.Series: A Pandas Series with the items from the Counter as the index
+               and their corresponding counts as the values. If the Counter is empty,
+               an empty Series with dtype=object is returned.
+
+    Examples:
+    >>> from collections import Counter
+    >>> counter = Counter(['a', 'b', 'a', 'c'])
+    >>> counter_to_series(counter)
+    a    2
+    b    1
+    c    1
+    dtype: int64
+
+    >>> empty_counter = Counter()
+    >>> counter_to_series(empty_counter)
+    Series([], dtype=object)
+    """
     if not counter:
         return pd.Series([], dtype=object)
 
@@ -54,6 +113,37 @@ def counter_to_series(counter: Counter) -> pd.Series:
 
 
 def unicode_summary_vc(vc: pd.Series) -> dict:
+    """
+    Generate a summary of Unicode character distributions for a given pandas Series.
+
+    This function takes a Series of Unicode characters and calculates various statistics 
+    related to their Unicode properties. It provides detailed information on distinct 
+    characters, their counts, categories, blocks, and scripts.
+
+    Args:
+        vc (pd.Series): A pandas Series containing Unicode characters.
+
+    Returns:
+        dict: A dictionary summarizing the following information:
+            - n_characters_distinct (int): The number of distinct characters.
+            - n_characters (int): The total number of characters.
+            - character_counts (pd.Series): A Series with counts of each character.
+            - category_alias_values (dict): A dictionary mapping characters to their long category names.
+            - block_alias_values (dict): A dictionary mapping characters to their block abbreviations.
+            - block_alias_counts (pd.Series): Series counting characters by their block aliases.
+            - n_block_alias (int): The number of unique block aliases.
+            - block_alias_char_counts (dict): A dictionary of character counts categorized by block aliases.
+            - script_counts (pd.Series): Series counting characters by their scripts.
+            - n_scripts (int): The number of unique scripts.
+            - script_char_counts (dict): A dictionary of character counts categorized by scripts.
+            - category_alias_counts (pd.Series): Series counting characters by their category aliases.
+            - n_category (int): The number of unique category aliases.
+            - category_alias_char_counts (dict): A dictionary of character counts categorized by category aliases.
+
+    Notes:
+        If the `tangled_up_in_unicode` package is not available, the function falls back to using
+        built-in Unicode data and provides basic information through a character handler.
+    """
     try:
         from tangled_up_in_unicode import (  # type: ignore
             block,
@@ -187,6 +277,34 @@ def word_summary_vc(vc: pd.Series, stop_words: List[str] = []) -> dict:
 
 
 def length_summary_vc(vc: pd.Series) -> dict:
+    """
+    Generate a summary of the lengths of the values in a pandas Series.
+
+    This function takes a pandas Series as input and calculates statistics regarding 
+    the lengths of the string representations of its values. It returns a dictionary 
+    containing the maximum length, mean length, median length, minimum length, 
+    and a histogram of the lengths.
+
+    Parameters:
+    vc (pd.Series): A pandas Series containing the values for which string lengths 
+                    are to be analyzed.
+
+    Returns:
+    dict: A dictionary containing the following key-value pairs:
+        - "max_length": The maximum length of the string representations.
+        - "mean_length": The mean length of the string representations (weighted average).
+        - "median_length": The median length of the string representations (weighted).
+        - "min_length": The minimum length of the string representations.
+        - "length_histogram": A pandas Series representing the frequency of each length.
+
+    Notes:
+    - The function handles empty input gracefully by returning NaN for mean and median 
+      lengths if no values are present in the input Series.
+    - The `weighted_median` function is expected to be defined elsewhere in the code.
+
+    Raises:
+    ValueError: If the input is not a pandas Series.
+    """
     series = pd.Series(vc.index, index=vc)
     length = series.str.len()
     length_counts = pd.Series(length.index, index=length)

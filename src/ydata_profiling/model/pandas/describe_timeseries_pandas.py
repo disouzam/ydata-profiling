@@ -16,6 +16,34 @@ from ydata_profiling.model.summary_algorithms import (
 
 
 def stationarity_test(config: Settings, series: pd.Series) -> Tuple[bool, float]:
+    """
+    Perform a stationarity test on a given time series using the Augmented Dickey-Fuller (ADF) test.
+
+    This function checks if a time series is stationary by performing the ADF test and returns a tuple containing
+    the result of the test and the p-value. It also ensures that the input series has no missing values before
+    performing the test.
+
+    Parameters:
+    ----------
+    config : Settings
+        An object containing configuration settings, including parameters for the ADF test such as autolag and 
+        maximum lag.
+    
+    series : pd.Series
+        A pandas Series object representing the time series data to be tested for stationarity.
+
+    Returns:
+    -------
+    Tuple[bool, float]
+        A tuple where the first element is a boolean indicating whether the time series is stationary 
+        (True if stationary, False otherwise), and the second element is the p-value of the ADF test.
+
+    Notes:
+    -----
+    The stationarity test is performed under the assumption that a lower p-value indicates stronger evidence 
+    against the null hypothesis of the test, which states that the time series contains a unit root (is non-stationary).
+    The significance threshold is determined from the provided configuration settings.
+    """
     # make sure the data has no missing values
     adfuller_test = adfuller(
         series.dropna(),
@@ -147,6 +175,35 @@ def get_fft_peaks(
 def identify_gaps(
     gap: pd.Series, is_datetime: bool, gap_tolerance: int = 2
 ) -> Tuple[pd.Series, list]:
+    """gap: pd.Series, is_datetime: bool, gap_tolerance: int = 2
+) -> Tuple[pd.Series, list]:
+    """
+    Identifies significant gaps in a time series based on the specified gap tolerance.
+
+    This function analyzes a given pandas Series to find and quantify gaps that exceed
+    a defined threshold based on the mean differences between consecutive elements. 
+    The function can handle both datetime and non-datetime series.
+
+    Parameters:
+    ----------
+    gap : pd.Series
+        A pandas Series containing the data to analyze for gaps.
+    
+    is_datetime : bool
+        A flag indicating whether the Series contains datetime values. If True, 
+        the function treats the Series as datetime; otherwise, it treats it as numeric.
+    
+    gap_tolerance : int, optional
+        A factor to determine the minimum gap size relative to the average non-zero gap. 
+        Default value is 2.
+
+    Returns:
+    -------
+    Tuple[pd.Series, list]
+        A tuple containing:
+        - A pandas Series of the non-zero gaps that exceed the calculated minimum gap size.
+        - A list of lists, where each inner list represents significant gaps identified in the Series.
+    """
     zero = pd.Timedelta(0) if is_datetime else 0
     diff = gap.diff()
 

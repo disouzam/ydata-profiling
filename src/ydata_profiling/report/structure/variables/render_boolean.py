@@ -17,6 +17,22 @@ from ydata_profiling.visualisation.plot import cat_frequency_plot
 
 
 def render_boolean(config: Settings, summary: dict) -> dict:
+    """
+    Renders a boolean variable's summary information including its characteristics and visual representation.
+
+    This function prepares a structured dictionary containing visual elements such as tables 
+    and frequency plots for a boolean variable based on the provided configuration and summary data.
+
+    Parameters:
+    config (Settings): The configuration settings that define how the output should be rendered, including styling and plotting options.
+    summary (dict): A dictionary containing summary statistics and metadata for the boolean variable, 
+                    such as 'varid', 'varname', 'description', 'n_distinct', 'p_distinct', 
+                    'n_missing', 'p_missing', 'memory_size', and 'value_counts_without_nan'.
+
+    Returns:
+    dict: A dictionary containing the structured representation of the boolean variable's summary,
+          including information, statistical tables, and visualizations.
+    """
     varid = summary["varid"]
     n_obs_bool = config.vars.bool.n_obs
     image_format = config.plot.image_format

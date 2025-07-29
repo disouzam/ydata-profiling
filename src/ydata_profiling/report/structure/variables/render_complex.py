@@ -16,6 +16,26 @@ from ydata_profiling.visualisation.plot import scatter_complex
 
 
 def render_complex(config: Settings, summary: dict) -> dict:
+    """
+    Renders the template variables for visualizing complex number data.
+
+    This function generates HTML components to display a summary of complex number statistics,
+    including information about distinct values, missing values, memory size,
+    and descriptive statistics such as mean, minimum, and maximum. It also creates
+    a scatter plot for visual representation in the complex plane.
+
+    Args:
+        config (Settings): Configuration settings for the rendering process, 
+                           including HTML styles and report precision.
+        summary (dict): A dictionary containing summary statistics for the complex data,
+                        such as 'varid', 'varname', 'n_distinct', 'p_distinct', 
+                        'n_missing', 'p_missing', 'memory_size', 'mean', 'min', 
+                        'max', 'n_zeros', 'p_zeros', and 'scatter_data'.
+
+    Returns:
+        dict: A dictionary containing rendered template variables, which includes
+              top and bottom components for displaying the information and statistics.
+    """
     varid = summary["varid"]
     template_variables = {}
     image_format = config.plot.image_format

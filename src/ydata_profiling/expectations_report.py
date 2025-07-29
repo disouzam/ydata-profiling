@@ -13,6 +13,33 @@ class ExpectationHandler(Handler):
     """Default handler"""
 
     def __init__(self, typeset: VisionsTypeset, *args, **kwargs):
+        """
+    Initializes an instance of the class with a mapping of expectation algorithms 
+    based on the provided typeset.
+
+    This constructor takes a VisionsTypeset object and allows for additional 
+    positional and keyword arguments to be passed to the parent class.
+
+    The mapping associates various data types with their corresponding expectation 
+    algorithms. The supported types and their respective algorithms are as follows:
+    
+    - "Unsupported": associates with `expectation_algorithms.generic_expectations`
+    - "Text": associates with `expectation_algorithms.categorical_expectations`
+    - "Categorical": associates with `expectation_algorithms.categorical_expectations`
+    - "Boolean": associates with `expectation_algorithms.categorical_expectations`
+    - "Numeric": associates with `expectation_algorithms.numeric_expectations`
+    - "URL": associates with `expectation_algorithms.url_expectations`
+    - "File": associates with `expectation_algorithms.file_expectations`
+    - "Path": associates with `expectation_algorithms.path_expectations`
+    - "DateTime": associates with `expectation_algorithms.datetime_expectations`
+    - "Image": associates with `expectation_algorithms.image_expectations`
+
+    Parameters:
+    typeset (VisionsTypeset): A VisionsTypeset object that defines the types for 
+                                expectations.
+    *args: Additional positional arguments to be passed to the parent class.
+    **kwargs: Additional keyword arguments to be passed to the parent class.
+    """
         mapping = {
             "Unsupported": [expectation_algorithms.generic_expectations],
             "Text": [expectation_algorithms.categorical_expectations],
@@ -34,6 +61,14 @@ class ExpectationsReport:
 
     @property
     def typeset(self) -> Optional[VisionsTypeset]:
+        """def typeset(self) -> Optional[VisionsTypeset]:
+    """
+    Retrieves the typeset associated with the current instance.
+
+    Returns:
+        Optional[VisionsTypeset]: The typeset if it exists; otherwise, returns None.
+    """
+    return None"""
         return None
 
     def to_expectation_suite(

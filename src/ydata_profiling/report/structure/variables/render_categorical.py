@@ -29,6 +29,50 @@ from ydata_profiling.visualisation.plot import cat_frequency_plot, histogram
 def render_categorical_frequency(
     config: Settings, summary: dict, varid: str
 ) -> Renderable:
+    """config: Settings, summary: dict, varid: str
+) -> Renderable:
+    """
+    Renders a frequency table for categorical data summarizing the unique values.
+
+    This function takes in a configuration object, a summary dictionary containing statistics 
+    about a categorical variable, and a variable ID. It constructs a table that displays 
+    the number of unique values and the percentage of unique values in the dataset, along 
+    with any relevant alerts for the user.
+
+    Args:
+        config (Settings): The configuration settings for rendering the display.
+        summary (dict): A dictionary containing summary statistics, including 
+                        'n_unique' for the count of unique values and 'p_unique' 
+                        for the percentage of unique values, as well as any alert fields.
+        varid (str): A string identifier for the variable being summarized, used for 
+                      generating an anchor ID for the rendered table.
+
+    Returns:
+        Renderable: A table object that represents the frequency of unique values and 
+                    their percentages, styled according to the provided configuration.
+    """
+    frequency_table = Table(
+        [
+            {
+                "name": "Unique",
+                "value": fmt_number(summary["n_unique"]),
+                "hint": help(
+                    "The number of unique values (all values that occur exactly once in the dataset)."
+                ),
+                "alert": "n_unique" in summary["alert_fields"],
+            },
+            {
+                "name": "Unique (%)",
+                "value": fmt_percent(summary["p_unique"]),
+                "alert": "p_unique" in summary["alert_fields"],
+            },
+        ],
+        name="Unique",
+        anchor_id=f"{varid}_unique_stats",
+        style=config.html.style,
+    )
+
+    return frequency_table"""
     frequency_table = Table(
         [
             {
@@ -56,6 +100,48 @@ def render_categorical_frequency(
 def render_categorical_length(
     config: Settings, summary: dict, varid: str
 ) -> Tuple[Renderable, Renderable]:
+    """config: Settings, summary: dict, varid: str
+) -> Tuple[Renderable, Renderable]:
+    """
+    Renders a table and a histogram for the lengths of categorical data.
+
+    This function generates a summary table containing the maximum, median,
+    mean, and minimum lengths of categorical data. It also creates a histogram
+    visualization for the lengths based on the provided summary.
+
+    Parameters:
+    ----------
+    config : Settings
+        The configuration settings that dictate the formatting and style
+        of the output.
+    summary : dict
+        A dictionary containing statistical information about the lengths of
+        categorical data, including 'max_length', 'median_length', 
+        'mean_length', 'min_length', and 'histogram_length'.
+    varid : str
+        A unique identifier for the variable, used to generate anchors for
+        the output elements.
+
+    Returns:
+    -------
+    Tuple[Renderable, Renderable]
+        A tuple containing two Renderable objects:
+        - A table summarizing the lengths of the categorical data.
+        - An image object representing the histogram of lengths.
+
+    Raises:
+    ------
+    ValueError
+        If the format of `summary['histogram_length']` is not a recognized
+        type (neither a list nor a tuple).
+
+    Notes:
+    -----
+    - The precision for the mean length is determined by the configuration
+      settings.
+    - The rendered table and histogram are associated with HTML anchors
+      formed using the provided variable identifier.
+    """
     length_table = Table(
         [
             {
@@ -119,6 +205,27 @@ def _get_n(value: Union[list, pd.DataFrame]) -> Union[int, List[int]]:
 def render_categorical_unicode(
     config: Settings, summary: dict, varid: str
 ) -> Tuple[Renderable, Renderable]:
+    """config: Settings, summary: dict, varid: str
+) -> Tuple[Renderable, Renderable]:
+    """
+    Generates Unicode-related frequency tables and a summary table for character categories, scripts, and blocks.
+
+    This function creates a visual representation of the most occurring categories, scripts, and blocks in a dataset of text
+    characters by generating various frequency tables based on the provided summary data. It organizes the output into an 
+    overview table and a container containing the frequency tables for characters, categories, scripts, and blocks.
+
+    Args:
+        config (Settings): Configuration settings used to define parameters such as maximum number of entries to print.
+        summary (dict): A dictionary containing summary statistics for the characters, including counts for categories,
+                        scripts, and blocks.
+        varid (str): A unique identifier used for generating anchor IDs in the rendered output.
+
+    Returns:
+        Tuple[Renderable, Renderable]: A tuple containing:
+            - An overview table summarizing character statistics (total characters, distinct characters, categories, 
+              scripts, and blocks).
+            - A container with frequency tables for characters, categories, scripts, and blocks presented in a tabbed format.
+    """
     n_freq_table_max = config.n_freq_table_max
 
     category_overview = FrequencyTable(
@@ -330,6 +437,27 @@ def render_categorical_unicode(
 
 
 def render_categorical(config: Settings, summary: dict) -> dict:
+    """
+    Renders information and visualizations for categorical variables.
+
+    This function generates various statistical summaries, frequency tables,
+    and visual representations for a categorical variable based on the provided 
+    configuration settings and summary information.
+
+    Args:
+        config (Settings): A Settings object containing configuration settings 
+                           for rendering, including styles and plot parameters.
+        summary (dict): A dictionary containing summary statistics for the 
+                        categorical variable, such as 'varid', 'varname', 
+                        'n_distinct', 'p_distinct', 'n_missing', 
+                        'p_missing', and various other data points relevant 
+                        to the variable.
+
+    Returns:
+        dict: A dictionary containing the rendered template variables, which 
+              include frequency tables, sample rows, and additional information 
+              related to the categorical variable.
+    """
     varid = summary["varid"]
     n_obs_cat = config.vars.cat.n_obs
     image_format = config.plot.image_format

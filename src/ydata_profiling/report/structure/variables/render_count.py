@@ -17,6 +17,28 @@ from ydata_profiling.visualisation.plot import histogram, mini_histogram
 
 
 def render_count(config: Settings, summary: dict) -> dict:
+    """
+    Render statistical summary and visualizations for a given dataset variable.
+
+    This function generates a structured output, including a variable 
+    information section, distinct value metrics, descriptive statistics, 
+    and histograms, formatted according to the specified settings.
+
+    Parameters:
+    config (Settings): The configuration settings for rendering, 
+                       including HTML styles and plotting formats.
+    summary (dict): A dictionary containing summary statistics for 
+                    the variable, including distinct counts, 
+                    missing values, and calculated metrics like mean, 
+                    minimum, maximum, and memory size.
+
+    Returns:
+    dict: A dictionary containing rendered template variables that include:
+          - 'top': A container with variable info, tables of metrics, 
+            and a mini histogram.
+          - 'bottom': A container with detailed frequency tables and 
+            histograms.
+    """
     template_variables = render_common(config, summary)
     image_format = config.plot.image_format
 

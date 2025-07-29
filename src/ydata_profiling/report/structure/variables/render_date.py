@@ -12,6 +12,36 @@ from ydata_profiling.visualisation.plot import histogram, mini_histogram
 
 
 def render_date(config: Settings, summary: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Renders a date summary for visualization based on the provided configuration and summary data.
+
+    This function takes in configuration settings and a summary dictionary containing date-related statistics,
+    and generates a structured template with various components including variable information, tables of statistics,
+    and histograms.
+
+    Args:
+        config (Settings): Configuration settings that include styling and image formatting options.
+        summary (Dict[str, Any]): A dictionary containing summary information including:
+            - varid (str): The variable identifier.
+            - varname (str): The name of the variable.
+            - alerts (list): A list of alerts associated with the variable.
+            - description (str): A description of the variable.
+            - n_distinct (int): Count of distinct values.
+            - p_distinct (float): Percentage of distinct values.
+            - n_missing (int): Count of missing values.
+            - p_missing (float): Percentage of missing values.
+            - memory_size (int): Size in bytes of the variable's data.
+            - min (datetime): The minimum date value.
+            - max (datetime): The maximum date value.
+            - n_invalid_dates (int): Count of invalid date entries.
+            - p_invalid_dates (float): Percentage of invalid dates.
+            - histogram (list or tuple): Data for histogram generation.
+
+    Returns:
+        Dict[str, Any]: A dictionary containing template variables for rendering the date summary, including:
+            - top (Container): A container with variable information, summary tables, and a mini histogram.
+            - bottom (Container): A container with the main histogram of date data.
+    """
     varid = summary["varid"]
     template_variables = {}
 

@@ -165,6 +165,55 @@ class ProfileReport(SerializeReport, ExpectationsReport):
         config_file: Optional[Union[Path, str]],
         lazy: bool,
     ) -> None:
+        """def __validate_inputs(
+    df: Optional[Union[pd.DataFrame, sDataFrame]],
+    minimal: bool,
+    tsmode: bool,
+    config_file: Optional[Union[Path, str]],
+    lazy: bool,
+) -> None:
+    """
+    Validates the inputs for the profiling function.
+
+    This method checks the following conditions:
+    - If a DataFrame is not provided and lazy profiling is not enabled,
+      a ValueError is raised.
+    - If a `config_file` is specified, using a minimal profile is not allowed,
+      and a ValueError is raised.
+    - If the provided DataFrame is a Pandas DataFrame, it verifies that it is
+      not empty; otherwise, a ValueError is raised.
+    - If the provided DataFrame is a Spark DataFrame and time-series mode is
+      enabled, a NotImplementedError is raised.
+    - For Spark DataFrames, it checks whether the RDD is empty, raising a
+      ValueError if it is.
+
+    Parameters:
+    ----------
+    df : Optional[Union[pd.DataFrame, sDataFrame]]
+        The DataFrame to validate. Can be a Pandas DataFrame or a Spark DataFrame.
+
+    minimal : bool
+        Indicates whether to execute in minimal profiling mode.
+
+    tsmode : bool
+        Indicates whether to enable time-series analysis.
+
+    config_file : Optional[Union[Path, str]]
+        An optional configuration file path that guides the profiling process.
+
+    lazy : bool
+        A flag indicating if lazy profiling should be performed.
+
+    Raises:
+    ------
+    ValueError
+        If the DataFrame is None and lazy is False,
+        if the DataFrame is empty, or if both `config_file` and `minimal` 
+        are set.
+
+    NotImplementedError
+        If the time-series mode is enabled while using a Spark DataFrame.
+    """
         # Lazy profile cannot be set if no DataFrame is provided
         if df is None and not lazy:
             raise ValueError("Can init a not-lazy ProfileReport with no DataFrame")
@@ -197,6 +246,32 @@ class ProfileReport(SerializeReport, ExpectationsReport):
     def __initialize_dataframe(
         df: Optional[Union[pd.DataFrame, sDataFrame]], report_config: Settings
     ) -> Optional[Union[pd.DataFrame, sDataFrame]]:
+        """def __initialize_dataframe(
+    df: Optional[Union[pd.DataFrame, sDataFrame]], report_config: Settings
+) -> Optional[Union[pd.DataFrame, sDataFrame]]:
+    """
+    Initializes a given DataFrame based on the provided report configuration.
+
+    This static method takes a DataFrame or a custom DataFrame type (`sDataFrame`) 
+    and prepares it according to specific settings defined in the report configuration. 
+    If the DataFrame is valid and contains time series settings, it sorts the DataFrame 
+    based on the specified column in the configuration and sets the index accordingly. 
+    If no sorting column is specified, it sorts the DataFrame by its index.
+
+    Parameters:
+    df (Optional[Union[pd.DataFrame, sDataFrame]]): 
+        A pandas DataFrame or a custom DataFrame to initialize. 
+        Can be None if no initialization is needed.
+    
+    report_config (Settings): 
+        An object containing configuration settings for the report, 
+        including time series specifications.
+
+    Returns:
+    Optional[Union[pd.DataFrame, sDataFrame]]: 
+        The initialized DataFrame according to the report configurations, 
+        or None if the input DataFrame was None.
+    """
 
         logger.info_def_report(
             df=df,
@@ -247,18 +322,78 @@ class ProfileReport(SerializeReport, ExpectationsReport):
 
     @property
     def typeset(self) -> Optional[VisionsTypeset]:
+        """def typeset(self) -> Optional[VisionsTypeset]:
+    """
+    Gets the typeset for the current instance. 
+
+    If the typeset has not been created yet, it initializes it using the
+    ProfilingTypeSet class, passing the configuration and type schema
+    defined in the instance. 
+
+    Returns:
+        Optional[VisionsTypeset]: The initialized typeset if it exists,
+        otherwise, it will create and return a new instance of 
+        ProfilingTypeSet.
+    """
+    if self._typeset is None:
+        self._typeset = ProfilingTypeSet(self.config, self._type_schema)
+    return self._typeset"""
         if self._typeset is None:
             self._typeset = ProfilingTypeSet(self.config, self._type_schema)
         return self._typeset
 
     @property
     def summarizer(self) -> BaseSummarizer:
+        """def summarizer(self) -> BaseSummarizer:
+    """
+    Retrieves the summarizer instance for the current object.
+
+    This property lazily initializes the summarizer if it has not 
+    been created yet. The summarizer is an instance of 
+    `PandasProfilingSummarizer`, which is initialized with the 
+    current object's typeset.
+
+    Returns:
+        BaseSummarizer: An instance of the summarizer used for generating 
+        summaries of the data.
+
+    Raises:
+        None: This property does not raise any exceptions.
+    """
+    if self._summarizer is None:
+        self._summarizer = PandasProfilingSummarizer(self.typeset)
+    return self._summarizer"""
         if self._summarizer is None:
             self._summarizer = PandasProfilingSummarizer(self.typeset)
         return self._summarizer
 
     @property
     def description_set(self) -> BaseDescription:
+        """def description_set(self) -> BaseDescription:
+    """
+    Gets the description set for the current object's data frame. 
+
+    This property lazily computes the description set if it has not been
+    previously calculated. It calls the `describe_df` function with the
+    current configuration, data frame, summarizer, typeset, and sample to
+    generate the description set.
+
+    Returns:
+        BaseDescription: The computed description set for the data frame.
+
+    Note:
+        The description set will only be computed once and stored for
+        subsequent access.
+    """
+    if self._description_set is None:
+        self._description_set = describe_df(
+            self.config,
+            self.df,
+            self.summarizer,
+            self.typeset,
+            self._sample,
+        )
+    return self._description_set"""
         if self._description_set is None:
             self._description_set = describe_df(
                 self.config,
@@ -271,30 +406,101 @@ class ProfileReport(SerializeReport, ExpectationsReport):
 
     @property
     def df_hash(self) -> Optional[str]:
+        """def df_hash(self) -> Optional[str]:
+    """
+    Compute and return the hash of the DataFrame.
+
+    This property retrieves the hash of the DataFrame if it has already been computed. 
+    If the hash has not been computed yet and the DataFrame is not None, 
+    it calculates the hash using the `hash_dataframe` function, stores it, 
+    and then returns the computed hash.
+
+    Returns:
+        Optional[str]: The hash of the DataFrame if available; otherwise, None.
+    """
         if self._df_hash is None and self.df is not None:
             self._df_hash = hash_dataframe(self.df)
         return self._df_hash
 
     @property
     def report(self) -> Root:
+        """def report(self) -> Root:
+    """
+    Get the report structure.
+
+    This property lazily initializes the report structure by calling 
+    `get_report_structure` with the current configuration and description 
+    set if it has not been previously set. On subsequent calls, it 
+    simply returns the already initialized report structure.
+
+    Returns:
+        Root: The report structure.
+
+    Raises:
+        None: This property does not raise exceptions.
+    """
+    if self._report is None:
+        self._report = get_report_structure(self.config, self.description_set)
+    return self._report"""
         if self._report is None:
             self._report = get_report_structure(self.config, self.description_set)
         return self._report
 
     @property
     def html(self) -> str:
+        """def html(self) -> str:
+    """
+    Retrieves the HTML representation of the object.
+
+    If the HTML has not been generated yet, this property will invoke
+    the `_render_html` method to create the HTML content and store it 
+    in the `_html` attribute. Subsequent calls to this property will
+    return the cached HTML.
+
+    Returns:
+        str: The HTML representation of the object.
+    """
         if self._html is None:
             self._html = self._render_html()
         return self._html
 
     @property
     def json(self) -> str:
+        """def json(self) -> str:
+    """
+    Retrieves the JSON representation of the object. If the JSON has not been 
+    previously generated, it will call the `_render_json` method to create it 
+    and store it for future access.
+
+    Returns:
+        str: The JSON string representing the object.
+    """
         if self._json is None:
             self._json = self._render_json()
         return self._json
 
     @property
     def widgets(self) -> Any:
+        """def widgets(self) -> Any:
+    """
+    Property that retrieves the widgets associated with the report.
+
+    This property checks if the report supports the widgets interface.
+    If the report involves comparing multiple descriptions (i.e., the 
+    'n' attribute in the description_set's table is a list with 
+    more than one element), a RuntimeError is raised, as widgets 
+    are not supported for such comparisons. 
+
+    If the widgets have not yet been rendered, they are generated 
+    using the _render_widgets() method and cached for future access.
+
+    Returns:
+        Any: The rendered widgets associated with the report.
+    
+    Raises:
+        RuntimeError: If the widgets interface is not supported 
+        due to multiple descriptions being compared.
+    """
         if (
             isinstance(self.description_set.table["n"], list)
             and len(self.description_set.table["n"]) > 1
@@ -399,6 +605,26 @@ class ProfileReport(SerializeReport, ExpectationsReport):
                 webbrowser.open_new_tab(output_file.absolute().as_uri())
 
     def _render_html(self) -> str:
+        """
+    Renders an HTML report based on the specified configuration and report data.
+
+    This method utilizes the HTMLReport class from the ydata_profiling package 
+    to generate an HTML representation of the report. It supports various 
+    configurations, such as displaying a navigation bar, using local assets, 
+    and applying styling options.
+
+    Args:
+        self: The instance of the class invoking this method, which contains 
+        the report data and configuration options.
+
+    Returns:
+        str: The rendered HTML content of the report.
+
+    Notes:
+        - Progress bar is displayed if the configuration permits.
+        - The HTML output can be minified based on the user's settings, which 
+        removes empty spaces and comments to optimize the file size.
+    """
         from ydata_profiling.report.presentation.flavours import HTMLReport
 
         report = self.report
@@ -427,6 +653,20 @@ class ProfileReport(SerializeReport, ExpectationsReport):
         return html
 
     def _render_widgets(self) -> Any:
+        """
+    Renders the widgets for the report using the WidgetReport class.
+
+    This method creates a progress bar to provide feedback during the widget rendering process.
+    The rendering is based on a deep copy of the report to ensure that the original data remains
+    unchanged.
+
+    Returns:
+        Any: The rendered widgets as generated by the WidgetReport.
+
+    Note:
+        The progress bar is disabled based on the configuration settings, and it will leave
+        a final status on completion if enabled.
+    """
         from ydata_profiling.report.presentation.flavours import WidgetReport
 
         report = self.report
@@ -442,6 +682,28 @@ class ProfileReport(SerializeReport, ExpectationsReport):
         return widgets
 
     def _render_json(self) -> str:
+        """
+    Renders the object's description as a JSON string.
+
+    This method converts various data types, including dataclasses, dictionaries,
+    lists, sets, Pandas Series, Pandas DataFrames, and NumPy arrays into a JSON
+    compatible format. The resulting JSON string is indented for better readability.
+
+    The conversion process is handled by the nested function `encode_it`, which recursively
+    encodes the input into JSON-serializable formats. Special handling is provided for
+    specific data types such as dataclasses, Pandas objects, and NumPy arrays.
+
+    The progress of the rendering process is displayed using a progress bar, unless
+    disabled in the configuration.
+
+    Returns:
+        str: The rendered description in JSON format.
+
+    Notes:
+        - This method is part of a class and relies on `self.description_set` 
+          and `self.config` to function properly.
+        - The JSON output may contain redacted information based on the provided configuration.
+    """
         def encode_it(o: Any) -> Any:
             if is_dataclass(o):
                 o = asdict(o)

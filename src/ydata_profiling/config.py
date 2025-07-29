@@ -189,6 +189,18 @@ class Style(BaseModel):
     # Primary color used for plotting and text where applicable.
     @property
     def primary_color(self) -> str:
+        """def primary_color(self) -> str:
+    """
+    Get the primary color used for plotting and text.
+
+    This property returns the first color from the primary_colors list. 
+    Note that this attribute may be deprecated in the future, and it is 
+    recommended to use primary_colors[0] directly instead.
+
+    Returns:
+        str: The primary color as a string.
+    """
+    return self.primary_colors[0]"""
         # This attribute may be deprecated in the future, please use primary_colors[0]
         return self.primary_colors[0]
 
@@ -354,6 +366,26 @@ class Settings(BaseSettings):
     notebook: Notebook = Notebook()
 
     def update(self, updates: dict) -> "Settings":
+        """```python
+def update(self, updates: dict) -> "Settings":
+    """
+    Updates the current settings with the provided dictionary of updates.
+
+    This method merges the current settings with the updates passed as a 
+    dictionary. It creates a new instance of Settings with the updated 
+    values without modifying the original instance.
+
+    Args:
+        updates (dict): A dictionary containing the updates to be applied to 
+                        the current settings.
+
+    Returns:
+        Settings: A new instance of Settings with the updated values.
+
+    Example:
+        settings = Settings()
+        updated_settings = settings.update({'key': 'new_value'})
+    """
         update = _merge_dictionaries(self.dict(), updates)
         return self.parse_obj(self.copy(update=update))
 
@@ -473,12 +505,60 @@ class Config:
 
     @staticmethod
     def get_arg_groups(key: str) -> dict:
+        """def get_arg_groups(key: str) -> dict:
+    """
+    Retrieve shorthand argument groups associated with a given key.
+
+    This static method accesses the configuration to obtain the argument groups 
+    corresponding to the provided key, and then transforms them into their shorthand 
+    representations.
+
+    Args:
+        key (str): The key associated with the argument groups to be retrieved.
+
+    Returns:
+        dict: A dictionary containing the shorthand representations of the argument groups.
+
+    Raises:
+        KeyError: If the specified key does not exist in the argument groups configuration.
+    """
         kwargs = Config.arg_groups[key]
         shorthand_args, _ = Config.shorthands(kwargs, split=False)
         return shorthand_args
 
     @staticmethod
     def shorthands(kwargs: dict, split: bool = True) -> Tuple[dict, dict]:
+        """def shorthands(kwargs: dict, split: bool = True) -> Tuple[dict, dict]:
+    """
+    Generates shorthand arguments from a given dictionary of keyword arguments.
+
+    This method checks if any values in the provided `kwargs` are `None` 
+    and replaces them with their corresponding shorthand definitions 
+    from the `Config._shorthands` mapping. 
+
+    If `split` is set to True, the function will return two dictionaries:
+    - The first dictionary contains the shorthand arguments.
+    - The second dictionary contains the remaining keyword arguments.
+
+    If `split` is set to False, the function returns only the dictionary 
+    of shorthand arguments and an empty dictionary.
+
+    Parameters:
+    ----------
+    kwargs : dict
+        A dictionary of keyword arguments that may contain values to be replaced with shorthands.
+    
+    split : bool, optional
+        A flag indicating whether to split the shorthand arguments from the remaining ones. 
+        Defaults to True.
+
+    Returns:
+    -------
+    Tuple[dict, dict]
+        A tuple containing:
+        - The dictionary of shorthand arguments (and remaining kwargs if split is True).
+        - The remaining kwargs if split is True, otherwise an empty dictionary.
+    """
         shorthand_args = {}
         if not split:
             shorthand_args = kwargs

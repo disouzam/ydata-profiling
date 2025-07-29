@@ -9,6 +9,31 @@ from ydata_profiling.visualisation.plot import histogram
 
 
 def render_file(config: Settings, summary: dict) -> dict:
+    """
+    Renders a file-related summary report using specified configuration settings.
+
+    This function constructs and returns a dictionary of template variables that
+    include visual elements such as histograms and frequency tables based on the 
+    provided summary of file data. It specifically handles file size histograms
+    and metadata about file creation, access, and modification times.
+
+    Parameters:
+    config (Settings): An object containing configuration settings used for rendering,
+                       including limits for frequency tables and image format options.
+    summary (dict): A dictionary containing the file summary data, which may include:
+                    - "varid": The variable identifier for the report.
+                    - "file_size": If present, a histogram of file sizes.
+                    - "file_created_time": Provides counts for the created time.
+                    - "file_accessed_time": Provides counts for the accessed time.
+                    - "file_modified_time": Provides counts for the modified time.
+                    - "histogram_file_size": Values used to generate the file size histogram.
+                    - "n": Total number of file entries for frequency calculations.
+
+    Returns:
+    dict: A dictionary containing template variables with updated content for rendering,
+          including sections for the top and bottom of the report with respective charts 
+          and tables.
+    """
     varid = summary["varid"]
 
     template_variables = render_path(config, summary)

@@ -12,6 +12,37 @@ from ydata_profiling.report.structure.variables.render_common import render_comm
 
 
 def render_url(config: Settings, summary: dict) -> dict:
+    """
+    Renders the URL statistics and frequency tables based on the provided configuration and summary.
+
+    Args:
+        config (Settings): An object containing configuration settings, including frequency table limits 
+                           and redaction options.
+        summary (dict): A dictionary containing summary statistics related to URLs, including:
+            - varid (str): Variable identifier.
+            - varname (str): Variable name.
+            - alerts (list): List of alerts related to the variables.
+            - description (str): Description of the variable.
+            - n (int): Total number of observations.
+            - n_distinct (int): Number of distinct values.
+            - p_distinct (float): Percentage of distinct values.
+            - n_missing (int): Number of missing observations.
+            - p_missing (float): Percentage of missing observations.
+            - memory_size (int): Memory size of the variable.
+            - value_counts_without_nan (dict): Frequency counts of values excluding NaN.
+            - scheme_counts (dict): Frequency counts of URL schemes.
+            - netloc_counts (dict): Frequency counts of URL netlocs.
+            - path_counts (dict): Frequency counts of URL paths.
+            - query_counts (dict): Frequency counts of URL queries.
+            - fragment_counts (dict): Frequency counts of URL fragments.
+            
+    Returns:
+        dict: A dictionary containing template variables for rendering URL statistics, including:
+            - freqtable_scheme, freqtable_netloc, freqtable_path, freqtable_query, freqtable_fragment:
+              Frequency tables for different parts of the URL.
+            - bottom: A container holding frequency tables.
+            - top: A container holding variable information and additional statistics in a grid layout.
+    """
     varid = summary["varid"]
     n_freq_table_max = config.n_freq_table_max
 

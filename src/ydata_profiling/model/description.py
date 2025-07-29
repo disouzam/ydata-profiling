@@ -21,12 +21,56 @@ class BaseAnalysis:
     date_end: Union[datetime, List[datetime]]
 
     def __init__(self, title: str, date_start: datetime, date_end: datetime) -> None:
+        """self,
+    n_series: int,
+    length: int,
+    start: Any,
+    end: Any,
+    period: float,
+    frequency: Optional[str] = None,
+) -> None:
+    """
+    Initializes a new instance of the class.
+
+    Parameters:
+    n_series (int): The number of time series to be generated or handled.
+    length (int): The length of each time series.
+    start (Any): The starting point of the time series, can be of various types (e.g., date, integer).
+    end (Any): The ending point of the time series, can be of various types (e.g., date, integer).
+    period (float): The period of the time series, specified as a float value.
+    frequency (Optional[str]): The frequency of the time series (e.g., 'daily', 'monthly'). If not provided, defaults to None.
+
+    Returns:
+    None: This initializer does not return a value.
+    """
         self.title = title
         self.date_start = date_start
         self.date_end = date_end
 
     @property
     def duration(self) -> Union[timedelta, List[timedelta]]:
+        """def duration(self) -> Union[timedelta, List[timedelta]]:
+    """
+    Calculates the duration between start and end dates.
+
+    Depending on the types of `date_start` and `date_end`, this property 
+    returns the duration as follows:
+
+    - If both `date_start` and `date_end` are instances of `datetime`, 
+      it returns a single `timedelta` object representing the difference 
+      between `date_end` and `date_start`.
+    
+    - If both `date_start` and `date_end` are lists of `datetime` objects, 
+      it returns a list of `timedelta` objects, each representing the 
+      duration between the corresponding start and end dates from the lists.
+
+    Raises:
+        TypeError: If `date_start` and `date_end` are not both `datetime` 
+        or both lists of `datetime` objects.
+
+    Returns:
+        Union[timedelta, List[timedelta]]: The calculated duration(s).
+    """
         if isinstance(self.date_start, datetime) and isinstance(
             self.date_end, datetime
         ):
@@ -69,6 +113,28 @@ class TimeIndexAnalysis:
         period: float,
         frequency: Optional[str] = None,
     ) -> None:
+        """self,
+    n_series: int,
+    length: int,
+    start: Any,
+    end: Any,
+    period: float,
+    frequency: Optional[str] = None,
+) -> None:
+    """
+    Initializes a new instance of the class.
+
+    Parameters:
+    n_series (int): The number of time series to be generated or handled.
+    length (int): The length of each time series.
+    start (Any): The starting point of the time series, can be of various types (e.g., date, integer).
+    end (Any): The ending point of the time series, can be of various types (e.g., date, integer).
+    period (float): The period of the time series, specified as a float value.
+    frequency (Optional[str]): The frequency of the time series (e.g., 'daily', 'monthly'). If not provided, defaults to None.
+
+    Returns:
+    None: This initializer does not return a value.
+    """
         self.n_series = n_series
         self.length = length
         self.start = start

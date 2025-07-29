@@ -9,6 +9,20 @@ from ydata_profiling.model.summary_algorithms import describe_date_1d
 
 
 def date_stats_spark(df: DataFrame, summary: dict) -> dict:
+    """
+    Calculate the minimum and maximum values of the first column in a Spark DataFrame.
+
+    This function takes a Spark DataFrame and computes the minimum and maximum values
+    of the first column in the DataFrame. It returns these statistics in a dictionary format.
+
+    Parameters:
+    df (DataFrame): A Spark DataFrame containing the data.
+    summary (dict): A dictionary for storing summary statistics (currently unused).
+
+    Returns:
+    dict: A dictionary with the minimum and maximum values of the first column,
+          with keys 'min' and 'max'.
+    """
     column = df.columns[0]
 
     expr = [

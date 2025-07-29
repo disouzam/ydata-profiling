@@ -24,6 +24,25 @@ from ydata_profiling.visualisation.plot import plot_overview_timeseries
 
 
 def get_dataset_overview(config: Settings, summary: BaseDescription) -> Renderable:
+    """
+    Generate an overview of the dataset statistics and variable types.
+
+    This function creates tables that summarize key metrics about the dataset,
+    including the number of variables, number of observations, missing cells,
+    duplicate rows, and memory usage, if applicable. It then returns a container
+    that holds these tables formatted for rendering.
+
+    Args:
+        config (Settings): The configuration settings that determine how 
+                           the output should be styled.
+        summary (BaseDescription): An object containing the summary statistics 
+                                   of the dataset, including counts of variables,
+                                   observations, missing values, and variable types.
+
+    Returns:
+        Renderable: A Container object that contains the dataset statistics and 
+                    variable types formatted as tables.
+    """
     table_metrics = [
         {
             "name": "Number of variables",
@@ -94,6 +113,39 @@ def get_dataset_overview(config: Settings, summary: BaseDescription) -> Renderab
 
 
 def get_dataset_schema(config: Settings, metadata: dict) -> Container:
+    """
+    Generates a schema for the dataset based on the provided metadata.
+
+    This function constructs a representation of the dataset's metadata including 
+    description, creator, author, URL, and copyright information. The metadata 
+    must contain relevant keys as described below, and the function formats 
+    this information into a structured output suitable for display.
+
+    Args:
+        config (Settings): The configuration settings that determine the style 
+                           of the generated output.
+        metadata (dict): A dictionary containing metadata about the dataset. 
+                         The expected keys include:
+                         - 'description': A brief description of the dataset.
+                         - 'creator': The entity that created the dataset.
+                         - 'author': The individual or organization that authored the dataset.
+                         - 'url': A URL linking to the dataset source or information.
+                         - 'copyright_holder': The holder of the copyright for the dataset.
+                         - 'copyright_year': The year of copyright.
+
+    Returns:
+        Container: A container object holding a structured table representation 
+                   of the dataset metadata.
+    
+    The output includes a table with the following information:
+        - Name and value pairs for 'description', 'creator', and 'author' where applicable.
+        - A clickable hyperlink for the 'url' if provided.
+        - Copyright information formatted with the holder's name and year if available.
+
+    Note:
+        If 'copyright_year' is not provided but 'copyright_holder' is, 
+        the year will not be included in the output.
+    """
     about_dataset = []
     for key in ["description", "creator", "author"]:
         if key in metadata and len(metadata[key]) > 0:
@@ -161,10 +213,38 @@ def get_dataset_reproduction(config: Settings, summary: BaseDescription) -> Rend
 
     @list_args
     def fmt_version(version: str) -> str:
+        """
+    Formats a version string into an HTML anchor tag linking to the ydata-profiling GitHub repository.
+
+    Args:
+        version (str): The version of the ydata-profiling package.
+
+    Returns:
+        str: An HTML string that contains an anchor tag with the version information.
+    
+    Example:
+        >>> fmt_version("1.0.0")
+        '<a href="https://github.com/ydataai/ydata-profiling">ydata-profiling v1.0.0</a>'
+    """
         return f'<a href="https://github.com/ydataai/ydata-profiling">ydata-profiling v{version}</a>'
 
     @list_args
     def fmt_config(config: str) -> str:
+        """
+    Generates an HTML anchor element that allows for downloading a given configuration string as a JSON file.
+
+    The function takes a configuration string, encodes it in a data URL format, 
+    and generates an anchor link with the appropriate attributes for initiating a 
+    download when clicked.
+
+    Args:
+        config (str): The configuration string that will be included in the downloaded JSON file.
+
+    Returns:
+        str: An HTML anchor element as a string. The link allows users to download the 
+              configuration string as 'config.json'.
+    """
+    return f'<a download="config.json" href="data:text/plain;charset=utf-8,{quote(config)}">config.json</a>'"""
         return f'<a download="config.json" href="data:text/plain;charset=utf-8,{quote(config)}">config.json</a>'
 
     reproduction_table = Table(
@@ -273,6 +353,26 @@ def get_dataset_alerts(config: Settings, alerts: list) -> Alerts:
 
 
 def get_timeseries_items(config: Settings, summary: BaseDescription) -> Container:
+    """
+    Generates a container with a summary of time series statistics and associated visualizations.
+
+    This function retrieves time series data, calculates various statistics including
+    the number of series, their lengths, starting and ending points, and the period. 
+    It formats these statistics into a table, and also provides visual representations
+    of the time series data in the form of images. The images are created at a specified
+    DPI and can be displayed in different scales.
+
+    Args:
+        config (Settings): Configuration settings that define plotting and styling parameters.
+        summary (BaseDescription): A summary object containing the time index analysis and related variables.
+
+    Returns:
+        Container: A container object that holds the table of time series statistics and 
+        visualizations of the time series data.
+    
+    Raises:
+        AssertionError: If the time_index_analysis attribute of summary is not an instance of TimeIndexAnalysis.
+    """
     @list_args
     def fmt_tsindex_limit(limit: Any) -> str:
         if isinstance(limit, datetime):

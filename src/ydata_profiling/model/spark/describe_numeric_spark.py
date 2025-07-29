@@ -12,6 +12,47 @@ from ydata_profiling.model.summary_algorithms import (
 
 
 def numeric_stats_spark(df: DataFrame, summary: dict) -> dict:
+    """
+    Calculate various statistical metrics for the first column of a Spark DataFrame.
+
+    This function computes the mean, standard deviation, variance, minimum, maximum,
+    kurtosis, skewness, and sum of the first column in the provided DataFrame. 
+    The results are returned as a dictionary.
+
+    Parameters:
+    -----------
+    df : DataFrame
+        A Spark DataFrame containing at least one column for which statistics are to be calculated.
+
+    summary : dict
+        A dictionary for any additional summary information required (currently unused).
+
+    Returns:
+    --------
+    dict
+        A dictionary containing the computed statistics with keys:
+        - 'mean': Mean of the column
+        - 'std': Standard deviation of the column
+        - 'variance': Variance of the column
+        - 'min': Minimum value of the column
+        - 'max': Maximum value of the column
+        - 'kurtosis': Kurtosis of the column
+        - 'skewness': Skewness of the column
+        - 'sum': Sum of the column
+    """
+    column = df.columns[0]
+
+    expr = [
+        F.mean(F.col(column)).alias("mean"),
+        F.stddev(F.col(column)).alias("std"),
+        F.variance(F.col(column)).alias("variance"),
+        F.min(F.col(column)).alias("min"),
+        F.max(F.col(column)).alias("max"),
+        F.kurtosis(F.col(column)).alias("kurtosis"),
+        F.skewness(F.col(column)).alias("skewness"),
+        F.sum(F.col(column)).alias("sum"),
+    ]
+    return df.agg(*expr).first().asDict()"""
     column = df.columns[0]
 
     expr = [

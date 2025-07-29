@@ -19,6 +19,26 @@ def in_jupyter_notebook() -> bool:
 
 
 def display_banner() -> None:
+    """
+    Displays a banner to the user, either in HTML format for Jupyter notebooks 
+    or as plain text in the console.
+
+    This function checks if it is being executed in a Jupyter notebook. If it is, 
+    and the banner has not yet been displayed, it will render the banner using HTML, 
+    including a clickable link and an informational text. If the function is not 
+    run in a Jupyter notebook, it prints the banner in plain text format to the console.
+
+    The banner consists of the following components:
+    - Title: A prominent title displayed to the user.
+    - Info Text: Additional information related to the banner.
+    - Link: A hyperlink for user registration.
+
+    This function modifies the global variable `_displayed_banner` to ensure that 
+    the banner is displayed only once during the session.
+
+    Returns:
+        None
+    """
     global _displayed_banner
     if in_jupyter_notebook() and not _displayed_banner:
         banner_html = f"""
